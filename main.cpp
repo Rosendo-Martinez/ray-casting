@@ -1,6 +1,8 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
+#include <string>
 
 const float PI = 3.14159265359f;
 
@@ -21,12 +23,21 @@ const int SOUTH_EAST = 5;
 const int NORTH_WEST = 6;
 const int SOUTH_WEST = 7;
 
+bool almostEqual(float a, float b, float epsilon = 1e-5f) {
+    return std::fabs(a - b) < epsilon;
+}
+
 struct Point
 {
     float x, y;
 
     Point() {}
     Point(float x, float y) : x(x), y(y) {}
+
+    bool operator==(const Point& other) const
+    {
+        return other.x == x && other.y == y;
+    }
 };
 
 struct Line
@@ -130,7 +141,7 @@ struct Line
             return a.x == p.x;
         }
 
-        return f(a.x) == a.y;
+        return almostEqual(f(a.x), a.y);
     }
 };
 
@@ -257,7 +268,33 @@ struct LineSegment
         float slope = (a.y - b.y) / (a.x - b.x);
         return Line(atan(slope), a);
     }
+
+    bool operator==(const LineSegment& other) const
+    {
+        return (other.a == a && other.b == b) || (other.a == b && other.b == a);
+    }
 };
+
+
+
+float normalize(float angle)
+{
+    float normalizedAngle = angle;
+
+    // Normalize by: abs(angle) <= 2 * PI 
+    if (std::abs(normalizedAngle) > 2 * PI)
+    {
+        normalizedAngle = normalizedAngle - 2 * PI * std::floor(normalizedAngle/(2 * PI));
+    }
+
+    // Normalize by: angle >= 0
+    if (normalizedAngle < 0)
+    {
+        normalizedAngle += 2 * PI;
+    }
+
+    return normalizedAngle;
+}
 
 Line toLine(LineSegment ls)
 {
@@ -350,9 +387,30 @@ Point intersection(Line a, Line b)
     return inter;
 }
 
+bool isParallel(Line a, Line b)
+{
+    float aNorm = normalize(a.angle);
+    float bNorm= normalize(b.angle);
+
+    if (aNorm > bNorm)
+    {
+        return aNorm == bNorm + PI;
+    }
+    else if (aNorm < bNorm)
+    {
+        return bNorm == aNorm + PI;
+    }
+    else // aNorm == bNorm
+    {
+        return true;
+    }
+}
+
 int intersectionCount(Line a, Line b)
 {
-    if (a.angle != b.angle)
+    // if (a.angle != b.angle)
+    // std::cout << "--Line A's Angle Norm: " << normalize(a.angle) << " Line B's Angle Norm: " << normalize(b.angle) << "\n";
+    if (!isParallel(a,b))
     {
         return ONE;
     }
@@ -371,12 +429,137 @@ bool isValidIntersection(Ray r, LineSegment ls, Point inter)
     return r.has(inter) && ls.has(inter);
 }
 
+void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
+{
+    for (const LineSegment& ls : lineSegments)
+    {
+        std:: cout << "line segments count: " << lineSegments.size() << "\n";
+        int count = intersectionCount(toLine(r), toLine(ls));
+
+        if (count == ZERO)
+        {
+            // Ray and line segment are parallel and do not overlap
+            // std::cout << "No overlap.\n";
+            continue;
+        }
+        else if (count == ONE)
+        {
+            // std:: cout << "hello?\n";
+            const Point inter = intersection(toLine(r), toLine(ls));
+            if (isValidIntersection(r, ls, inter))
+            {
+                intersectionPoints.push_back(inter);
+            }
+        }
+        else // many intersections
+        {
+            // ray intersects with entire line segment
+            if (isValidIntersection(r, ls, ls.a) && isValidIntersection(r, ls, ls.b))
+            {
+                intersectionLineSegments.push_back(ls);
+            }
+            // ray's base is a point between the endpoints of the line segment [base, ls.a]
+            else if (isValidIntersection(r, ls, ls.a))
+            {
+                intersectionLineSegments.push_back(LineSegment(ls.a, r.base));
+            }
+            // ray's base is a point between the endpoints of the line segment [base, ls.b]
+            else if (isValidIntersection(r, ls, ls.b))
+            {
+                intersectionLineSegments.push_back(LineSegment(ls.b, r.base));
+            }
+            else // ray does not intersect with line segment
+            {
+                continue;
+            }
+        }
+    }
+
+    // TO DO
+    // Should I remove duplicate intersection points (not ls)? Yes.
+    // I don't think that their can be duplicate ls or sub-ls's. So I don't think I'll
+    // need to worry about duplicates for the lss.
+}
+
 // Point intersection(Ray r, LineSegment ls)
 // {
 //     // RULE: assume that the ray's base can never be on the line segment
 
 //     // ASSUMPTION: assume that the ray and line segment do intersect atleast at 1 point
 // }
+
+
+void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& actualIntersectionPoints, std::vector<LineSegment>& actualIntersectionLineSegments, const std::string description)
+{
+    std::vector<Point> resultIntersectionPoints;
+    std::vector<LineSegment> resultIntersectionLineSegments;
+
+    getIntersections(r, lineSegments, resultIntersectionPoints, resultIntersectionLineSegments);
+
+
+    if (resultIntersectionLineSegments.size() != actualIntersectionLineSegments.size())
+    {
+        std::cout << "Test: Failed [intersection line segments wrong]\n" << "    Description: " << description << "\n";
+
+        std::cout << "    Result Intersection LineSegments: "; 
+        for (auto resultLs : resultIntersectionLineSegments)
+        {
+            std::cout << "{(" << resultLs.a.x << ", " << resultLs.a.y << "),(" << resultLs.b.x << ", " << resultLs.b.y << ")} "; 
+        }
+        std::cout << "\n";
+
+        std::cout << "    Result Intersection Points: ";
+        for (auto resultP : resultIntersectionPoints)
+        {
+            std::cout << "(" << resultP.x << ", " << resultP.y << ") ";
+        }
+        std::cout << "\n";
+        return;
+    }
+
+    if (resultIntersectionPoints.size() != actualIntersectionPoints.size())
+    {
+        std::cout << "Test: Failed [intersection points wrong]\n" << "    Description: " << description << "\n";
+        return;
+    }
+
+    for (const Point p : actualIntersectionPoints)
+    {
+        for (auto it = resultIntersectionPoints.begin(); it != resultIntersectionPoints.end(); ++it)
+        {
+            if (*it == p)
+            {
+                resultIntersectionPoints.erase(it);
+                break;
+            }
+            else if (it + 1 == resultIntersectionPoints.end())
+            {
+                std::cout << "Test: Failed [expected result to have Point(" << p.x << "," << p.y << ")]\n" << "    Description: " << description << "\n";
+                return;
+            }
+        }
+    }
+
+    for (const LineSegment ls : actualIntersectionLineSegments)
+    {
+        for (auto it = actualIntersectionLineSegments.begin(); it != actualIntersectionLineSegments.end(); ++it)
+        {
+            if (*it == ls)
+            {
+                actualIntersectionLineSegments.erase(it);
+                break;
+            }
+            else if (it + 1 == actualIntersectionLineSegments.end())
+            {
+                std::cout << "Test: Failed [expected result to have LineSegment({" << ls.a.x << "," << ls.a.y << "},{" << ls.b.x << "," << ls.b.y  << "})]\n" << "    Description: " << description << "\n";
+                return;
+            }
+        }
+    }
+
+    std::cout << "Test: Passed\n" << "    Description: " << description << "\n";
+    return;
+}
 
 void testLineSegmentHas(LineSegment ls, Point a, bool actual)
 {
@@ -413,7 +596,7 @@ void testToRay(Point base, Point p, Ray actual)
     std::cout << "Result = [(" << result.base.x << "," << result.base.y << "), " << result.angle << "], Actual = [(" << actual.base.x << "," << actual.base.y << "), " << actual.angle << "]\n";
 }
 
-void testIntersection(LineSegment l1, LineSegment l2, Point actual)
+void testLineIntersection(LineSegment l1, LineSegment l2, Point actual)
 {
     Point result = intersection(toLine(l1), toLine(l2));
 
@@ -427,25 +610,33 @@ void testIntersectionCount(LineSegment a, LineSegment b, int actual)
     std::cout << "Result = " << (result == ZERO ? "ZERO" : result == MANY ? "MANY" : "ONE") << ", Actual = " << (actual == ZERO ? "ZERO" : actual == MANY ? "MANY" : "ONE") << "\n";
 }
 
+void testIntersectionCount(Line a, Line b, int actual)
+{
+    int result = intersectionCount(a,b);
+
+    std::cout << "Result = " << (result == ZERO ? "ZERO" : result == MANY ? "MANY" : "ONE") << ", Actual = " << (actual == ZERO ? "ZERO" : actual == MANY ? "MANY" : "ONE") << "\n";
+}
+
 int main(int argc, char* argv[]) 
 {
     std::cout << "Tests: intersection()\n";
-    testIntersection(LineSegment(Point(0,0), Point(10,10)), LineSegment(Point(10,0), Point(0,10)), Point(5,5));
-    testIntersection(LineSegment(Point(4,0), Point(4,100)), LineSegment(Point(0,0), Point(8,8)), Point(4,4));
-    testIntersection(LineSegment(Point(0,100), Point(0,0)), LineSegment(Point(-10,7.5),Point(11,7.5)), Point(0,7.5));
-    testIntersection(LineSegment(Point(0,0), Point(103.23,0)), LineSegment(Point(23,1.5), Point(29,-1.5)), Point(26,0));
-    testIntersection(LineSegment(Point(15,14), Point(11,-4)), LineSegment(Point(0,0), Point(26,10)), Point(13,5));
+    testLineIntersection(LineSegment(Point(0,0), Point(10,10)), LineSegment(Point(10,0), Point(0,10)), Point(5,5));
+    testLineIntersection(LineSegment(Point(4,0), Point(4,100)), LineSegment(Point(0,0), Point(8,8)), Point(4,4));
+    testLineIntersection(LineSegment(Point(0,100), Point(0,0)), LineSegment(Point(-10,7.5),Point(11,7.5)), Point(0,7.5));
+    testLineIntersection(LineSegment(Point(0,0), Point(103.23,0)), LineSegment(Point(23,1.5), Point(29,-1.5)), Point(26,0));
+    testLineIntersection(LineSegment(Point(15,14), Point(11,-4)), LineSegment(Point(0,0), Point(26,10)), Point(13,5));
 
     std::cout << "Tests: intersectionCount()\n";
     testIntersectionCount(LineSegment(Point(0,0), Point(2,4)), LineSegment(Point(5,0), Point(7,4)), ZERO);
     testIntersectionCount(LineSegment(Point(0,0), Point(10,0)), LineSegment(Point(5,-5), Point(5,5)), ONE);
     testIntersectionCount(LineSegment(Point(-7,-7), Point(0,0)), LineSegment(Point(0,0), Point(7,7)), MANY);
+    testIntersectionCount(Line(PI, Point(0,0)), Line(0, Point(0,0)), MANY);
 
     std::cout << "Test: toRay()\n";
     testToRay(Point(5,7), Point(5,21), Ray(PI/2, Point(5,7)));
     testToRay(Point(-12,-13), Point(-12,-101), Ray(-PI/2, Point(-12,-13)));
     testToRay(Point(7,10), Point(-13,10), Ray(PI,Point(7,10)));
-    testToRay(Point(0,0), Point(1000,0), Ray(0, Point(1000,0)));
+    testToRay(Point(0,0), Point(1000,0), Ray(0, Point(0,0)));
     testToRay(Point(0,5), Point(7,12), Ray(PI/4, Point(0,5)));
 
     std::cout << "Test: getDirection()\n";
@@ -460,6 +651,7 @@ int main(int argc, char* argv[])
     testLineHas(toLine(LineSegment(Point(1,1),Point(2,2))), Point(1,-12), false);
     testLineHas(toLine(LineSegment(Point(0,0),Point(0,10))), Point(1,1), false);
     testLineHas(toLine(LineSegment(Point(0,0),Point(0,10))), Point(0,123), true);
+    testLineHas(toLine(LineSegment(Point(0,0), Point(-10,-10))), Point(-10,-10), true);
     
     std::cout << "Test: Ray.has()\n";
     // ray but point is not on line representation or ray
@@ -481,6 +673,8 @@ int main(int argc, char* argv[])
     testRayHas(toRay(Point(0,0), Point(1,1)), Point(-12,-12), false);
     // ray point left without point
     testRayHas(toRay(Point(0,0), Point(-1,1)), Point(2,-2), false);
+    // FUCK
+    testRayHas(toRay(Point(0,0), Point(-10,-10)), Point(-10,-10), true);
 
     std::cout << "Test: LineSegment.has()\n";
     // a point that is on ls
@@ -489,6 +683,102 @@ int main(int argc, char* argv[])
     testLineSegmentHas(LineSegment(Point(-1,-1), Point(-9,-9)), Point(-10,-10), false);
     // a point that is not on line or ls
     testLineSegmentHas(LineSegment(Point(2,4), Point(43,301)), Point(12,-98), false);
+
+    std::cout << "Test: getIntersections()\n";
+    {
+        // Test 1: 4 line segments with 2 intersections points
+
+        const Ray r = toRay(Point(0,0), Point(0,21));
+        std::vector<LineSegment> ls;
+
+        ls.push_back(LineSegment(Point(-121,-98), Point(78,-73))); // ls1
+        ls.push_back(LineSegment(Point(-3,-2), Point(7,8))); // ls2
+        ls.push_back(LineSegment(Point(-11,21), Point(23,21))); // ls3
+        ls.push_back(LineSegment(Point(41,27), Point(2,37))); // ls4
+
+        std::vector<Point> actualIntersectionPoints;
+
+        actualIntersectionPoints.push_back(Point(0,1)); // i1
+        actualIntersectionPoints.push_back(Point(0,21)); // i2
+
+        std::vector<LineSegment> actualIntersectionLineSegments;
+
+        testGetIntersections(r, ls, actualIntersectionPoints, actualIntersectionLineSegments, "4 line segments, with 2 intersection points");
+    }
+    {
+        // Test 2: 1 line segment intersection, 1 intersection point, and 3 not intersected line segments
+
+        const Ray r = toRay(Point(0,0), Point(8,0));
+        std::vector<LineSegment> ls;
+
+        ls.push_back(LineSegment(Point(-100,0), Point(-7,0))); // ls1
+        ls.push_back(LineSegment(Point(4,-5), Point(12,-25))); // ls2
+        ls.push_back(LineSegment(Point(4,10), Point(12,10))); // ls3
+        ls.push_back(LineSegment(Point(8,0), Point(24,0))); // ls4
+        ls.push_back(LineSegment(Point(32,5), Point(32,-5))); // ls5
+
+        std::vector<Point> actualIntersectionPoints;
+
+        actualIntersectionPoints.push_back(Point(32,0)); // i1
+
+        std::vector<LineSegment> actualIntersectionLineSegments;
+
+        actualIntersectionLineSegments.push_back(LineSegment(Point(8,0), Point(24,0))); // ils1
+
+        testGetIntersections(r, ls, actualIntersectionPoints, actualIntersectionLineSegments, "1 line segment intersection, 1 intersection point, and 3 not intersected line segments");
+    }
+    {
+        // Test 3: ray base between endpoints of line segment 
+
+        const Ray r = toRay(Point(0,0), Point(-10,-10));
+        std::vector<LineSegment> ls;
+
+        ls.push_back(LineSegment(Point(-10,-10), Point(10,10))); // ls1
+
+        std::vector<Point> actualIntersectionPoints;
+
+        std::vector<LineSegment> actualIntersectionLineSegments;
+
+        actualIntersectionLineSegments.push_back(LineSegment(Point(-10,-10), Point(0,0))); // ils1
+
+        testGetIntersections(r, ls, actualIntersectionPoints, actualIntersectionLineSegments, "ray base between endpoints of line segment");
+    }
+    {
+        // Test 4: no intersections
+
+        const Ray r = toRay(Point(0,0), Point(10,10));
+        std::vector<LineSegment> ls;
+
+        ls.push_back(LineSegment(Point(-20,-100), Point(8,-100))); // ls1
+        ls.push_back(LineSegment(Point(2,7), Point(2,25))); // ls2
+        ls.push_back(LineSegment(Point(5,0), Point(15,10))); // ls3
+
+        std::vector<Point> actualIntersectionPoints;
+
+        std::vector<LineSegment> actualIntersectionLineSegments;
+
+        testGetIntersections(r, ls, actualIntersectionPoints, actualIntersectionLineSegments, "3 line segments, no intersections");
+    }
+    {
+        // Test 5: no duplicate intersection points
+
+        const Ray r = toRay(Point(0,0), Point(5,0));
+        std::vector<LineSegment> ls;
+
+        ls.push_back(LineSegment(Point(5,0), Point(5,-5))); // ls1
+        ls.push_back(LineSegment(Point(5,0), Point(5,5))); // ls2
+
+        std::vector<Point> actualIntersectionPoints;
+
+        actualIntersectionPoints.push_back(Point(5,0)); // i1
+
+        std::vector<LineSegment> actualIntersectionLineSegments;
+
+        testGetIntersections(r, ls, actualIntersectionPoints, actualIntersectionLineSegments, "two line segments with same endpoints which ray goes through, no duplicates intersection points");
+    }
+
+    std::cout << "Test Ray.has()\n";
+
 
     return 0;
 }
