@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 const float PI = 3.14159265359f;
 
@@ -433,10 +434,13 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
         }
     }
 
-    // TO DO
-    // Should I remove duplicate intersection points (not ls)? Yes.
-    // I don't think that their can be duplicate ls or sub-ls's. So I don't think I'll
-    // need to worry about duplicates for the lss.
+    // Sort points by x first, then by y if x values are equal
+    std::sort(intersectionPoints.begin(), intersectionPoints.end(), [](const Point& a, const Point& b) {
+        return (a.x < b.x) || (a.x == b.x && a.y < b.y);
+    });
+
+    // Remove duplicates using std::unique, which will use operator==
+    intersectionPoints.erase(std::unique(intersectionPoints.begin(), intersectionPoints.end()), intersectionPoints.end());
 }
 
 
@@ -450,7 +454,7 @@ void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegme
 
     if (resultIntersectionLineSegments.size() != actualIntersectionLineSegments.size())
     {
-        std::cout << "Test: Failed [intersection line segments wrong]\n" << "    Description: " << description << "\n";
+        std::cout << "Test: FAILED [intersection line segments wrong]\n" << "    Description: " << description << "\n";
 
         std::cout << "    Result Intersection LineSegments: "; 
         for (auto resultLs : resultIntersectionLineSegments)
@@ -470,7 +474,21 @@ void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegme
 
     if (resultIntersectionPoints.size() != actualIntersectionPoints.size())
     {
-        std::cout << "Test: Failed [intersection points wrong]\n" << "    Description: " << description << "\n";
+        std::cout << "Test: FAILED [intersection points wrong]\n" << "    Description: " << description << "\n";
+
+        std::cout << "    Result Intersection LineSegments: "; 
+        for (auto resultLs : resultIntersectionLineSegments)
+        {
+            std::cout << "{(" << resultLs.a.x << ", " << resultLs.a.y << "),(" << resultLs.b.x << ", " << resultLs.b.y << ")} "; 
+        }
+        std::cout << "\n";
+
+        std::cout << "    Result Intersection Points: ";
+        for (auto resultP : resultIntersectionPoints)
+        {
+            std::cout << "(" << resultP.x << ", " << resultP.y << ") ";
+        }
+        std::cout << "\n";
         return;
     }
 
@@ -485,7 +503,7 @@ void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegme
             }
             else if (it + 1 == resultIntersectionPoints.end())
             {
-                std::cout << "Test: Failed [expected result to have Point(" << p.x << "," << p.y << ")]\n" << "    Description: " << description << "\n";
+                std::cout << "Test: FAILED [expected result to have Point(" << p.x << "," << p.y << ")]\n" << "    Description: " << description << "\n";
                 return;
             }
         }
@@ -502,13 +520,13 @@ void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegme
             }
             else if (it + 1 == actualIntersectionLineSegments.end())
             {
-                std::cout << "Test: Failed [expected result to have LineSegment({" << ls.a.x << "," << ls.a.y << "},{" << ls.b.x << "," << ls.b.y  << "})]\n" << "    Description: " << description << "\n";
+                std::cout << "Test: FAILED [expected result to have LineSegment({" << ls.a.x << "," << ls.a.y << "},{" << ls.b.x << "," << ls.b.y  << "})]\n" << "    Description: " << description << "\n";
                 return;
             }
         }
     }
 
-    std::cout << "Test: Passed\n" << "    Description: " << description << "\n";
+    std::cout << "Test: PASSED\n" << "    Description: " << description << "\n";
     return;
 }
 
