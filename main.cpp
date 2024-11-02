@@ -162,6 +162,50 @@ struct Line
 
         return normalizedAngle;
     }
+
+    Point intersection(Line other)
+    {
+        // WARNING: assumes lines intersect at one and only one point
+
+        Point inter;
+        if (type() == VERTICAL && other.type() == ANGLED)
+        {
+            inter.x = xIntercept();
+            inter.y = other.f(inter.x);
+        }
+        else if (type() == VERTICAL && other.type() == HORIZONTAL)
+        {
+            inter.x = xIntercept();
+            inter.y = other.yIntercept();
+        }
+        else if (type() == HORIZONTAL && other.type() == ANGLED)
+        {
+            inter.y = yIntercept();
+            inter.x = other.fInverse(inter.y);
+        }
+        else if (type() == HORIZONTAL && other.type() == VERTICAL)
+        {
+            inter.y = yIntercept();
+            inter.x = other.xIntercept();
+        }
+        else if (type() == ANGLED && other.type() == HORIZONTAL)
+        {
+            inter.y = other.yIntercept();
+            inter.x = fInverse(inter.y);
+        }
+        else if (type() == ANGLED && other.type() == VERTICAL)
+        {
+            inter.x = other.xIntercept();
+            inter.y = f(inter.x);
+        }
+        else // both angled
+        {
+            inter.x = (yIntercept() - other.yIntercept()) / (other.slope() - slope());
+            inter.y = f(inter.x);
+        }
+
+        return inter;
+    }
 };
 
 struct Ray
@@ -310,49 +354,6 @@ struct LineSegment
     }
 };
 
-Point intersection(Line a, Line b)
-{
-    // WARNING: assumes lines intersect at one and only one point
-
-    Point inter;
-    if (a.type() == VERTICAL && b.type() == ANGLED)
-    {
-        inter.x = a.xIntercept();
-        inter.y = b.f(inter.x);
-    }
-    else if (a.type() == VERTICAL && b.type() == HORIZONTAL)
-    {
-        inter.x = a.xIntercept();
-        inter.y = b.yIntercept();
-    }
-    else if (a.type() == HORIZONTAL && b.type() == ANGLED)
-    {
-        inter.y = a.yIntercept();
-        inter.x = b.fInverse(inter.y);
-    }
-    else if (a.type() == HORIZONTAL && b.type() == VERTICAL)
-    {
-        inter.y = a.yIntercept();
-        inter.x = b.xIntercept();
-    }
-    else if (a.type() == ANGLED && b.type() == HORIZONTAL)
-    {
-        inter.y = b.yIntercept();
-        inter.x = a.fInverse(inter.y);
-    }
-    else if (a.type() == ANGLED && b.type() == VERTICAL)
-    {
-        inter.x = b.xIntercept();
-        inter.y = a.f(inter.x);
-    }
-    else // both angled
-    {
-        inter.x = (a.yIntercept() - b.yIntercept()) / (b.slope() - a.slope());
-        inter.y = a.f(inter.x);
-    }
-
-    return inter;
-}
 
 bool isParallel(Line a, Line b)
 {
@@ -407,7 +408,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
         }
         else if (count == ONE)
         {
-            const Point inter = intersection(r.toLine(), ls.toLine());
+            const Point inter = r.toLine().intersection(ls.toLine());
             if (isValidIntersection(r, ls, inter))
             {
                 intersectionPoints.push_back(inter);
@@ -553,7 +554,7 @@ void testToRay(Point base, Point p, Ray actual)
 
 void testLineIntersection(LineSegment l1, LineSegment l2, Point actual)
 {
-    Point result = intersection(l1.toLine(), l2.toLine());
+    Point result = l1.toLine().intersection(l2.toLine());
 
     std::cout << "Result = (" << result.x << "," << result.y << "), Actual = (" << actual.x << "," << actual.y << ")\n";
 }
