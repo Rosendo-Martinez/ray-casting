@@ -390,11 +390,6 @@ struct LineSegment
 };
 
 
-bool isValidIntersection(Ray r, LineSegment ls, Point inter)
-{
-    return r.has(inter) && ls.has(inter);
-}
-
 void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
 {
     for (const LineSegment& ls : lineSegments)
@@ -409,7 +404,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
         else if (count == ONE)
         {
             const Point inter = r.toLine().intersection(ls.toLine());
-            if (isValidIntersection(r, ls, inter))
+            if (r.has(inter) && ls.has(inter))
             {
                 intersectionPoints.push_back(inter);
             }
@@ -417,17 +412,17 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
         else // many intersections
         {
             // ray intersects with entire line segment
-            if (isValidIntersection(r, ls, ls.a) && isValidIntersection(r, ls, ls.b))
+            if (r.has(ls.a) && r.has(ls.b))
             {
                 intersectionLineSegments.push_back(ls);
             }
             // ray's base is a point between the endpoints of the line segment [base, ls.a]
-            else if (isValidIntersection(r, ls, ls.a))
+            else if (r.has(ls.a))
             {
                 intersectionLineSegments.push_back(LineSegment(ls.a, r.base));
             }
             // ray's base is a point between the endpoints of the line segment [base, ls.b]
-            else if (isValidIntersection(r, ls, ls.b))
+            else if (r.has(ls.b))
             {
                 intersectionLineSegments.push_back(LineSegment(ls.b, r.base));
             }
