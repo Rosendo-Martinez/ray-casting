@@ -263,6 +263,11 @@ struct Ray
             return point.x <= base.x;
         }
     }
+
+    Line toLine() const
+    {
+        return Line(angle, base);
+    }
 };
 
 
@@ -304,11 +309,6 @@ struct LineSegment
         return (other.a == a && other.b == b) || (other.a == b && other.b == a);
     }
 };
-
-Line toLine(Ray r)
-{
-    return Line(r.angle, r.base);
-}
 
 Point intersection(Line a, Line b)
 {
@@ -398,7 +398,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
 {
     for (const LineSegment& ls : lineSegments)
     {
-        int count = intersectionCount(toLine(r), ls.toLine());
+        int count = intersectionCount(r.toLine(), ls.toLine());
 
         if (count == ZERO)
         {
@@ -407,7 +407,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
         }
         else if (count == ONE)
         {
-            const Point inter = intersection(toLine(r), ls.toLine());
+            const Point inter = intersection(r.toLine(), ls.toLine());
             if (isValidIntersection(r, ls, inter))
             {
                 intersectionPoints.push_back(inter);
