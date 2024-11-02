@@ -143,6 +143,25 @@ struct Line
 
         return almostEqual(f(a.x), a.y);
     }
+
+    float normalizedAngle() const
+    {
+        float normalizedAngle = angle;
+
+        // Normalize by: abs(angle) <= 2 * PI 
+        if (std::abs(normalizedAngle) > 2 * PI)
+        {
+            normalizedAngle = normalizedAngle - 2 * PI * std::floor(normalizedAngle/(2 * PI));
+        }
+
+        // Normalize by: angle >= 0
+        if (normalizedAngle < 0)
+        {
+            normalizedAngle += 2 * PI;
+        }
+
+        return normalizedAngle;
+    }
 };
 
 struct Ray
@@ -276,26 +295,6 @@ struct LineSegment
 };
 
 
-
-float normalize(float angle)
-{
-    float normalizedAngle = angle;
-
-    // Normalize by: abs(angle) <= 2 * PI 
-    if (std::abs(normalizedAngle) > 2 * PI)
-    {
-        normalizedAngle = normalizedAngle - 2 * PI * std::floor(normalizedAngle/(2 * PI));
-    }
-
-    // Normalize by: angle >= 0
-    if (normalizedAngle < 0)
-    {
-        normalizedAngle += 2 * PI;
-    }
-
-    return normalizedAngle;
-}
-
 Line toLine(LineSegment ls)
 {
     float slope = (ls.a.y - ls.b.y) / (ls.a.x - ls.b.x);
@@ -389,8 +388,8 @@ Point intersection(Line a, Line b)
 
 bool isParallel(Line a, Line b)
 {
-    float aNorm = normalize(a.angle);
-    float bNorm= normalize(b.angle);
+    float aNorm = a.normalizedAngle();
+    float bNorm= b.normalizedAngle();
 
     if (aNorm > bNorm)
     {
@@ -408,8 +407,6 @@ bool isParallel(Line a, Line b)
 
 int intersectionCount(Line a, Line b)
 {
-    // if (a.angle != b.angle)
-    // std::cout << "--Line A's Angle Norm: " << normalize(a.angle) << " Line B's Angle Norm: " << normalize(b.angle) << "\n";
     if (!isParallel(a,b))
     {
         return ONE;
@@ -433,18 +430,15 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
 {
     for (const LineSegment& ls : lineSegments)
     {
-        std:: cout << "line segments count: " << lineSegments.size() << "\n";
         int count = intersectionCount(toLine(r), toLine(ls));
 
         if (count == ZERO)
         {
             // Ray and line segment are parallel and do not overlap
-            // std::cout << "No overlap.\n";
             continue;
         }
         else if (count == ONE)
         {
-            // std:: cout << "hello?\n";
             const Point inter = intersection(toLine(r), toLine(ls));
             if (isValidIntersection(r, ls, inter))
             {
@@ -480,13 +474,6 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
     // I don't think that their can be duplicate ls or sub-ls's. So I don't think I'll
     // need to worry about duplicates for the lss.
 }
-
-// Point intersection(Ray r, LineSegment ls)
-// {
-//     // RULE: assume that the ray's base can never be on the line segment
-
-//     // ASSUMPTION: assume that the ray and line segment do intersect atleast at 1 point
-// }
 
 
 void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& actualIntersectionPoints, std::vector<LineSegment>& actualIntersectionLineSegments, const std::string description)
