@@ -172,6 +172,17 @@ struct Ray
     Ray() {}
     Ray(float angle, Point base) : angle(angle), base(base) {}
 
+    Ray(Point base, Point pointOnRay)
+    {
+        if (base.x == pointOnRay.x && base.y == pointOnRay.y)
+        {
+            throw std::runtime_error("Ray's with no direction are not allowed!");
+        }
+
+        angle = atan2(pointOnRay.y - base.y, pointOnRay.x - base.x);
+        this->base = base;
+    }
+
     int getDirection()
     {
         // Idea: Maybe angle member should always be normalized?
@@ -293,41 +304,6 @@ struct LineSegment
         return (other.a == a && other.b == b) || (other.a == b && other.b == a);
     }
 };
-
-Ray toRay(Point base, Point pointOnRay)
-{
-    if (base.x == pointOnRay.x && base.y == pointOnRay.y)
-    {
-        throw std::runtime_error("Ray's with no direction are not allowed!");
-    }
-
-    // Vertical rays
-    if (base.x == pointOnRay.x)
-    {
-        // Points up
-        if (pointOnRay.y > base.y)
-        {
-            return Ray(PI/2,base);
-        }
-        // Points down
-        else
-        {
-            return Ray(-PI/2,base);
-        }
-    }
-
-    float angle = atan((base.y - pointOnRay.y)/(base.x - pointOnRay.x));
-
-    // Points left-ish
-    if (pointOnRay.x < base.x)
-    {
-        // Angle return by atan() is wrong for rays that point left-ish.
-        // Add 180 degrees to fix it.
-        angle += PI;
-    }
-
-    return Ray(angle, base);
-}
 
 Line toLine(Ray r)
 {
@@ -570,7 +546,7 @@ void testGetDirection(Ray r, int actual)
 
 void testToRay(Point base, Point p, Ray actual)
 {
-    Ray result = toRay(base, p);
+    Ray result = Ray(base, p);
 
     std::cout << "Result = [(" << result.base.x << "," << result.base.y << "), " << result.angle << "], Actual = [(" << actual.base.x << "," << actual.base.y << "), " << actual.angle << "]\n";
 }
@@ -634,26 +610,26 @@ int main(int argc, char* argv[])
     
     std::cout << "Test: Ray.has()\n";
     // ray but point is not on line representation or ray
-    testRayHas(toRay(Point(0,0), Point(4,2)), Point(4,-1098), false);
+    testRayHas(Ray(Point(0,0), Point(4,2)), Point(4,-1098), false);
     // Rest of tests have a point that is on the line representation of the ray.
     // ray pointing up with point
-    testRayHas(toRay(Point(0,0), Point(0,10)), Point(0,4), true);
+    testRayHas(Ray(Point(0,0), Point(0,10)), Point(0,4), true);
     // ray point down with point
-    testRayHas(toRay(Point(0,0), Point(0,-10)), Point(0,-1000.25), true);
+    testRayHas(Ray(Point(0,0), Point(0,-10)), Point(0,-1000.25), true);
     // ray point right with point
-    testRayHas(toRay(Point(0,0), Point(1,1)), Point(12,12), true);
+    testRayHas(Ray(Point(0,0), Point(1,1)), Point(12,12), true);
     // ray point left with point
-    testRayHas(toRay(Point(0,0), Point(-1,1)), Point(-2,2), true);
+    testRayHas(Ray(Point(0,0), Point(-1,1)), Point(-2,2), true);
     // ray pointing up without point
-    testRayHas(toRay(Point(0,0), Point(0,10)), Point(0,-4), false);
+    testRayHas(Ray(Point(0,0), Point(0,10)), Point(0,-4), false);
     // ray point down without point
-    testRayHas(toRay(Point(0,0), Point(0,-10)), Point(0,1000.25), false);
+    testRayHas(Ray(Point(0,0), Point(0,-10)), Point(0,1000.25), false);
     // ray point right without point
-    testRayHas(toRay(Point(0,0), Point(1,1)), Point(-12,-12), false);
+    testRayHas(Ray(Point(0,0), Point(1,1)), Point(-12,-12), false);
     // ray point left without point
-    testRayHas(toRay(Point(0,0), Point(-1,1)), Point(2,-2), false);
+    testRayHas(Ray(Point(0,0), Point(-1,1)), Point(2,-2), false);
     // FUCK
-    testRayHas(toRay(Point(0,0), Point(-10,-10)), Point(-10,-10), true);
+    testRayHas(Ray(Point(0,0), Point(-10,-10)), Point(-10,-10), true);
 
     std::cout << "Test: LineSegment.has()\n";
     // a point that is on ls
@@ -667,7 +643,7 @@ int main(int argc, char* argv[])
     {
         // Test 1: 4 line segments with 2 intersections points
 
-        const Ray r = toRay(Point(0,0), Point(0,21));
+        const Ray r = Ray(Point(0,0), Point(0,21));
         std::vector<LineSegment> ls;
 
         ls.push_back(LineSegment(Point(-121,-98), Point(78,-73))); // ls1
@@ -687,7 +663,7 @@ int main(int argc, char* argv[])
     {
         // Test 2: 1 line segment intersection, 1 intersection point, and 3 not intersected line segments
 
-        const Ray r = toRay(Point(0,0), Point(8,0));
+        const Ray r = Ray(Point(0,0), Point(8,0));
         std::vector<LineSegment> ls;
 
         ls.push_back(LineSegment(Point(-100,0), Point(-7,0))); // ls1
@@ -709,7 +685,7 @@ int main(int argc, char* argv[])
     {
         // Test 3: ray base between endpoints of line segment 
 
-        const Ray r = toRay(Point(0,0), Point(-10,-10));
+        const Ray r = Ray(Point(0,0), Point(-10,-10));
         std::vector<LineSegment> ls;
 
         ls.push_back(LineSegment(Point(-10,-10), Point(10,10))); // ls1
@@ -725,7 +701,7 @@ int main(int argc, char* argv[])
     {
         // Test 4: no intersections
 
-        const Ray r = toRay(Point(0,0), Point(10,10));
+        const Ray r = Ray(Point(0,0), Point(10,10));
         std::vector<LineSegment> ls;
 
         ls.push_back(LineSegment(Point(-20,-100), Point(8,-100))); // ls1
@@ -741,7 +717,7 @@ int main(int argc, char* argv[])
     {
         // Test 5: no duplicate intersection points
 
-        const Ray r = toRay(Point(0,0), Point(5,0));
+        const Ray r = Ray(Point(0,0), Point(5,0));
         std::vector<LineSegment> ls;
 
         ls.push_back(LineSegment(Point(5,0), Point(5,-5))); // ls1
