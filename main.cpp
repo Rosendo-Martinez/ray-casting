@@ -206,6 +206,25 @@ struct Line
 
         return inter;
     }
+
+    bool isParallel(Line other) const
+    {
+        float thisNorm = normalizedAngle();
+        float otherNorm = other.normalizedAngle();
+
+        if (thisNorm > otherNorm)
+        {
+            return thisNorm == otherNorm + PI;
+        }
+        else if (thisNorm < otherNorm)
+        {
+            return otherNorm == thisNorm + PI;
+        }
+        else // norm == norm
+        {
+            return true;
+        }
+    }
 };
 
 struct Ray
@@ -355,28 +374,9 @@ struct LineSegment
 };
 
 
-bool isParallel(Line a, Line b)
-{
-    float aNorm = a.normalizedAngle();
-    float bNorm= b.normalizedAngle();
-
-    if (aNorm > bNorm)
-    {
-        return aNorm == bNorm + PI;
-    }
-    else if (aNorm < bNorm)
-    {
-        return bNorm == aNorm + PI;
-    }
-    else // aNorm == bNorm
-    {
-        return true;
-    }
-}
-
 int intersectionCount(Line a, Line b)
 {
-    if (!isParallel(a,b))
+    if (!a.isParallel(b))
     {
         return ONE;
     }
