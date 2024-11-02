@@ -48,7 +48,7 @@ struct Line
     Line() {}
     Line(float angle, Point p) : angle(angle), p(p) {}
 
-    float xIntercept()
+    float xIntercept() const
     {
         if (type() == HORIZONTAL)
         {
@@ -63,7 +63,7 @@ struct Line
         return -(yIntercept()/slope());
     }
 
-    float yIntercept()
+    float yIntercept() const
     {
         if (type() == VERTICAL)
         {
@@ -78,7 +78,7 @@ struct Line
         return p.y - slope() * p.x;
     }
 
-    float f(float x)
+    float f(float x) const
     {
         if (type() == VERTICAL)
         {
@@ -88,7 +88,7 @@ struct Line
         return slope() * x + yIntercept();
     }
 
-    float fInverse(float y)
+    float fInverse(float y) const
     {
         if (type() == HORIZONTAL)
         {
@@ -98,7 +98,7 @@ struct Line
         return (y - yIntercept())/slope();
     }
 
-    float slope()
+    float slope() const
     {
         if (type() == VERTICAL)
         {
@@ -115,7 +115,7 @@ struct Line
      *  0 is angled
      *  1 is vertical
      */
-    int type()
+    int type() const
     {
         // Horizontal
         if (angle == 0.f || std::floor(angle / PI) == angle / PI)
@@ -134,7 +134,7 @@ struct Line
         }
     }
 
-    bool has(Point a)
+    bool has(Point a) const
     {
         if (type() == VERTICAL)
         {
@@ -163,7 +163,7 @@ struct Line
         return normalizedAngle;
     }
 
-    Point intersection(Line other)
+    Point intersection(Line other) const
     {
         // WARNING: assumes lines intersect at one and only one point
 
@@ -226,7 +226,7 @@ struct Line
         }
     }
 
-    int intersectionCount(Line other) 
+    int intersectionCount(Line other) const
     {
         if (!isParallel(other))
         {
@@ -262,7 +262,7 @@ struct Ray
         this->base = base;
     }
 
-    int getDirection()
+    int getDirection() const
     {
         // Idea: Maybe angle member should always be normalized?
         //       Then I wouldn't need to normalize it here.
@@ -316,7 +316,7 @@ struct Ray
         }
     }
 
-    bool has(Point point)
+    bool has(Point point) const
     {   
         if (!Line(angle, base).has(point))
         {
@@ -357,7 +357,7 @@ struct LineSegment
     LineSegment() {}
     LineSegment(Point a, Point b) : a(a), b(b) {}
 
-    bool has(Point point)
+    bool has(Point point) const
     {
         // Check if point is on line representation of line segment
         if (!toLine().has(point))
