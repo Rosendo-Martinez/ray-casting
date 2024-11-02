@@ -225,6 +225,22 @@ struct Line
             return true;
         }
     }
+
+    int intersectionCount(Line other) 
+    {
+        if (!isParallel(other))
+        {
+            return ONE;
+        }
+        else if (type() == HORIZONTAL)
+        {
+            return yIntercept() == other.yIntercept() ? MANY : ZERO;
+        }
+        else // vertical or angled
+        {
+            return xIntercept() == other.xIntercept() ? MANY : ZERO;
+        }
+    }
 };
 
 struct Ray
@@ -374,22 +390,6 @@ struct LineSegment
 };
 
 
-int intersectionCount(Line a, Line b)
-{
-    if (!a.isParallel(b))
-    {
-        return ONE;
-    }
-    else if (a.type() == HORIZONTAL)
-    {
-        return a.yIntercept() == b.yIntercept() ? MANY : ZERO;
-    }
-    else // vertical or angled
-    {
-        return a.xIntercept() == b.xIntercept() ? MANY : ZERO;
-    }
-}
-
 bool isValidIntersection(Ray r, LineSegment ls, Point inter)
 {
     return r.has(inter) && ls.has(inter);
@@ -399,7 +399,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
 {
     for (const LineSegment& ls : lineSegments)
     {
-        int count = intersectionCount(r.toLine(), ls.toLine());
+        int count = r.toLine().intersectionCount(ls.toLine());
 
         if (count == ZERO)
         {
@@ -561,14 +561,14 @@ void testLineIntersection(LineSegment l1, LineSegment l2, Point actual)
 
 void testIntersectionCount(LineSegment a, LineSegment b, int actual)
 {
-    int result = intersectionCount(a.toLine(),b.toLine());
+    int result = a.toLine().intersectionCount(b.toLine());
 
     std::cout << "Result = " << (result == ZERO ? "ZERO" : result == MANY ? "MANY" : "ONE") << ", Actual = " << (actual == ZERO ? "ZERO" : actual == MANY ? "MANY" : "ONE") << "\n";
 }
 
 void testIntersectionCount(Line a, Line b, int actual)
 {
-    int result = intersectionCount(a,b);
+    int result = a.intersectionCount(b);
 
     std::cout << "Result = " << (result == ZERO ? "ZERO" : result == MANY ? "MANY" : "ONE") << ", Actual = " << (actual == ZERO ? "ZERO" : actual == MANY ? "MANY" : "ONE") << "\n";
 }
