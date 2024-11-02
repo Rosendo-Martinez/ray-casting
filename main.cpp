@@ -282,7 +282,7 @@ struct LineSegment
         return (point.x >= xRange[0] && point.x <= xRange[1]) && (point.y >= yRange[0] && point.y <= yRange[1]);
     }
 
-    Line toLine()
+    Line toLine() const
     {
         float slope = (a.y - b.y) / (a.x - b.x);
         return Line(atan(slope), a);
@@ -293,14 +293,6 @@ struct LineSegment
         return (other.a == a && other.b == b) || (other.a == b && other.b == a);
     }
 };
-
-
-Line toLine(LineSegment ls)
-{
-    float slope = (ls.a.y - ls.b.y) / (ls.a.x - ls.b.x);
-    return Line(atan(slope), ls.a);
-}
-
 
 Ray toRay(Point base, Point pointOnRay)
 {
@@ -430,7 +422,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
 {
     for (const LineSegment& ls : lineSegments)
     {
-        int count = intersectionCount(toLine(r), toLine(ls));
+        int count = intersectionCount(toLine(r), ls.toLine());
 
         if (count == ZERO)
         {
@@ -439,7 +431,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
         }
         else if (count == ONE)
         {
-            const Point inter = intersection(toLine(r), toLine(ls));
+            const Point inter = intersection(toLine(r), ls.toLine());
             if (isValidIntersection(r, ls, inter))
             {
                 intersectionPoints.push_back(inter);
@@ -585,14 +577,14 @@ void testToRay(Point base, Point p, Ray actual)
 
 void testLineIntersection(LineSegment l1, LineSegment l2, Point actual)
 {
-    Point result = intersection(toLine(l1), toLine(l2));
+    Point result = intersection(l1.toLine(), l2.toLine());
 
     std::cout << "Result = (" << result.x << "," << result.y << "), Actual = (" << actual.x << "," << actual.y << ")\n";
 }
 
 void testIntersectionCount(LineSegment a, LineSegment b, int actual)
 {
-    int result = intersectionCount(toLine(a),toLine(b));
+    int result = intersectionCount(a.toLine(),b.toLine());
 
     std::cout << "Result = " << (result == ZERO ? "ZERO" : result == MANY ? "MANY" : "ONE") << ", Actual = " << (actual == ZERO ? "ZERO" : actual == MANY ? "MANY" : "ONE") << "\n";
 }
@@ -634,11 +626,11 @@ int main(int argc, char* argv[])
     testGetDirection(Ray(PI/4 + 2 * PI, Point(0,0)), NORTH_EAST);
 
     std::cout << "Test: Line.has()\n";
-    testLineHas(toLine(LineSegment(Point(1,1),Point(2,2))), Point(6,6), true);
-    testLineHas(toLine(LineSegment(Point(1,1),Point(2,2))), Point(1,-12), false);
-    testLineHas(toLine(LineSegment(Point(0,0),Point(0,10))), Point(1,1), false);
-    testLineHas(toLine(LineSegment(Point(0,0),Point(0,10))), Point(0,123), true);
-    testLineHas(toLine(LineSegment(Point(0,0), Point(-10,-10))), Point(-10,-10), true);
+    testLineHas(LineSegment(Point(1,1),Point(2,2)).toLine(), Point(6,6), true);
+    testLineHas(LineSegment(Point(1,1),Point(2,2)).toLine(), Point(1,-12), false);
+    testLineHas(LineSegment(Point(0,0),Point(0,10)).toLine(), Point(1,1), false);
+    testLineHas(LineSegment(Point(0,0),Point(0,10)).toLine(), Point(0,123), true);
+    testLineHas(LineSegment(Point(0,0), Point(-10,-10)).toLine(), Point(-10,-10), true);
     
     std::cout << "Test: Ray.has()\n";
     // ray but point is not on line representation or ray
