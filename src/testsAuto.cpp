@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include"RayCasting.h"
+#include "RayCasting.h"
 
 
 void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& actualIntersectionPoints, std::vector<LineSegment>& actualIntersectionLineSegments, const std::string description)

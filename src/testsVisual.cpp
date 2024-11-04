@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include "RayCasting.h"
 
 // g++ -c visual.cpp
 // g++ visual.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
