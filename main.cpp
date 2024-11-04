@@ -39,6 +39,11 @@ struct Point
     {
         return other.x == x && other.y == y;
     }
+
+    // float distSquared(Point other)
+    // {
+    //     return (other.x - x) * (other.x - x) + (other.y - y) * (other.y - y);
+    // }
 };
 
 struct Line
@@ -348,6 +353,63 @@ struct Ray
     {
         return Line(angle, base);
     }
+
+    // Point closestPoint(std::vector<Point> & points, std::vector<LineSegment> & lineSegments)
+    // {
+    //     if (points.size() == 0 || lineSegments.size() == 0)
+    //     {
+    //         throw std::runtime_error("Points and/or line segments vectors is size zero. This is not allowed.");
+    //     }
+
+    //     for (auto p : points)
+    //     {
+    //         if (!has(p))
+    //         {
+    //             throw std::runtime_error("Point must lie on ray.");
+    //         }
+    //     }
+
+    //     for (auto ls : lineSegments)
+    //     {
+    //         if (!has(ls.a) || !has(ls.b))
+    //         {
+    //             throw std::runtime_error("Line segment must lie on ray.");
+    //         }
+    //     }
+
+
+    //     Point closestSoFar;
+    //     if (points.size() > 0)
+    //     {
+    //         closestSoFar = points.front();
+    //     }
+    //     else
+    //     {
+    //         closestSoFar = lineSegments.front().a;
+    //     }
+
+    //     for (auto p : points)
+    //     {
+    //         if (p.distSquared(base) < closestSoFar.distSquared(base))
+    //         {
+    //             closestSoFar = p;
+    //         }
+    //     }
+
+    //     for (auto ls : lineSegments)
+    //     {
+    //         if (ls.a.distSquared(base) < closestSoFar.distSquared(base))
+    //         {
+    //             closestSoFar = ls.a;
+    //         }
+    //         if (ls.b.distSquared(base) < closestSoFar.distSquared(base))
+    //         {
+    //             closestSoFar = ls.b;
+    //         }
+    //     }
+
+    //     return closestSoFar;
+    // }
 };
 
 
