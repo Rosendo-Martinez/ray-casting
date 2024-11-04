@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 #include <stdexcept>
 #include "RayCasting.h"
 
@@ -409,4 +410,56 @@ Line LineSegment::toLine() const
 bool LineSegment::operator==(const LineSegment& other) const
 {
     return (other.a == a && other.b == b) || (other.a == b && other.b == a);
+}
+
+void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
+{
+    for (const LineSegment& ls : lineSegments)
+    {
+        int count = r.toLine().intersectionCount(ls.toLine());
+
+        if (count == ZERO)
+        {
+            // Ray and line segment are parallel and do not overlap
+            continue;
+        }
+        else if (count == ONE)
+        {
+            const Point inter = r.toLine().intersection(ls.toLine());
+            if (r.has(inter) && ls.has(inter))
+            {
+                intersectionPoints.push_back(inter);
+            }
+        }
+        else // many intersections
+        {
+            // ray intersects with entire line segment
+            if (r.has(ls.a) && r.has(ls.b))
+            {
+                intersectionLineSegments.push_back(ls);
+            }
+            // ray's base is a point between the endpoints of the line segment [base, ls.a]
+            else if (r.has(ls.a))
+            {
+                intersectionLineSegments.push_back(LineSegment(ls.a, r.base));
+            }
+            // ray's base is a point between the endpoints of the line segment [base, ls.b]
+            else if (r.has(ls.b))
+            {
+                intersectionLineSegments.push_back(LineSegment(ls.b, r.base));
+            }
+            else // ray does not intersect with line segment
+            {
+                continue;
+            }
+        }
+    }
+
+    // Sort points by x first, then by y if x values are equal
+    std::sort(intersectionPoints.begin(), intersectionPoints.end(), [](const Point& a, const Point& b) {
+        return (a.x < b.x) || (a.x == b.x && a.y < b.y);
+    });
+
+    // Remove duplicates using std::unique, which will use operator==
+    intersectionPoints.erase(std::unique(intersectionPoints.begin(), intersectionPoints.end()), intersectionPoints.end());
 }

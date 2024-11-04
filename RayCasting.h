@@ -79,3 +79,5 @@ struct LineSegment
     Line toLine() const;
     bool operator==(const LineSegment& other) const;
 };
+
+void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments);
