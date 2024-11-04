@@ -1,10 +1,11 @@
 #include <SFML/Graphics.hpp>
 
+// g++ -c visual.cpp
+// g++ visual.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
+
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    sf::RenderWindow window(sf::VideoMode(1200, 800), "Window");
 
     while (window.isOpen())
     {
@@ -14,10 +15,6 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
-        window.clear();
-        window.draw(shape);
-        window.display();
     }
 
     return 0;
