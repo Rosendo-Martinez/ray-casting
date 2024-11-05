@@ -18,7 +18,7 @@ bool Point::operator==(const Point& other) const
 
 float Point::distSquared(Point other) const
 {
-    // return (other.x - x) * (other.x - x) + (other.y - y) * (other.y - y);
+    return (other.x - x) * (other.x - x) + (other.y - y) * (other.y - y);
 }
 
 Line::Line() {}
@@ -320,62 +320,36 @@ Line Ray::toLine() const
     return Line(angle, base);
 }
 
-// Point Ray::closestPoint(std::vector<Point> & points, std::vector<LineSegment> & lineSegments)
-// {
-//     // if (points.size() == 0 || lineSegments.size() == 0)
-//     // {
-//     //     throw std::runtime_error("Points and/or line segments vectors is size zero. This is not allowed.");
-//     // }
+Point Ray::closestPointOnRay(std::vector<Point> & points)
+{
+    if (points.size() == 0)
+    {
+        throw std::runtime_error("Points vector is size zero. This is not allowed.");
+    }
 
-//     // for (auto p : points)
-//     // {
-//     //     if (!has(p))
-//     //     {
-//     //         throw std::runtime_error("Point must lie on ray.");
-//     //     }
-//     // }
+    // Disabled due to causing floating point errors
+    // for (auto p : points)
+    // {
+    //     if (!has(p))
+    //     {
+    //         throw std::runtime_error("Point must lie on ray.");
+    //     }
+    // }
 
-//     // for (auto ls : lineSegments)
-//     // {
-//     //     if (!has(ls.a) || !has(ls.b))
-//     //     {
-//     //         throw std::runtime_error("Line segment must lie on ray.");
-//     //     }
-//     // }
+    // WARNING: assumes that all points passed lie on ray
 
+    Point closestSoFar = points.front();
 
-//     // Point closestSoFar;
-//     // if (points.size() > 0)
-//     // {
-//     //     closestSoFar = points.front();
-//     // }
-//     // else
-//     // {
-//     //     closestSoFar = lineSegments.front().a;
-//     // }
+    for (auto p : points)
+    {
+        if (p.distSquared(base) < closestSoFar.distSquared(base))
+        {
+            closestSoFar = p;
+        }
+    }
 
-//     // for (auto p : points)
-//     // {
-//     //     if (p.distSquared(base) < closestSoFar.distSquared(base))
-//     //     {
-//     //         closestSoFar = p;
-//     //     }
-//     // }
-
-//     // for (auto ls : lineSegments)
-//     // {
-//     //     if (ls.a.distSquared(base) < closestSoFar.distSquared(base))
-//     //     {
-//     //         closestSoFar = ls.a;
-//     //     }
-//     //     if (ls.b.distSquared(base) < closestSoFar.distSquared(base))
-//     //     {
-//     //         closestSoFar = ls.b;
-//     //     }
-//     // }
-
-//     // return closestSoFar;
-// }
+    return closestSoFar;
+}
 
 LineSegment::LineSegment() {}
 

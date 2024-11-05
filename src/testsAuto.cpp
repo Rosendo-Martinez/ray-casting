@@ -4,6 +4,24 @@
 #include "RayCasting.h"
 
 
+void testClosestPointOnRay(Ray r, std::vector<Point> & points, const Point actual, std::string description)
+{
+    Point result = r.closestPointOnRay(points);
+
+    if (result == actual)
+    {
+        std::cout << "PASSED: " << description << "\n";
+        std::cout << "    Result = (" << result.x << ", " << result.y << ")\n";
+        std::cout << "    Actual = (" << actual.x << ", " << actual.y << ")\n";
+    }
+    else 
+    {
+        std::cout << "FAILED: " << description << "\n";
+        std::cout << "    Result = (" << result.x << ", " << result.y << ")\n";
+        std::cout << "    Actual = (" << actual.x << ", " << actual.y << ")\n";
+    }
+}
+
 void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& actualIntersectionPoints, std::vector<LineSegment>& actualIntersectionLineSegments, const std::string description)
 {
     std::vector<Point> resultIntersectionPoints;
@@ -306,8 +324,45 @@ int main(int argc, char* argv[])
         testGetIntersections(r, ls, actualIntersectionPoints, actualIntersectionLineSegments, "two line segments with same endpoints which ray goes through, no duplicates intersection points");
     }
 
-    std::cout << "Test Ray.has()\n";
+    std::cout << "Test Ray.closestPointOnRay()\n";
+    {
+        std::vector<Point> points;
+        points.push_back(Point(5,7));
+        points.push_back(Point(5,100));
 
+        Ray r = Ray(Point(5,5), Point(5,50));
+
+        testClosestPointOnRay(r, points, Point(5,7), "vertical ray, with 2 points to check, sorted closest to farthest");
+    }
+    {
+        std::vector<Point> points;
+        points.push_back(Point(1000,-100));
+        points.push_back(Point(376, -100));
+        points.push_back(Point(0,-100));
+
+        Ray r = Ray(Point(-2,-100), Point(50,-100));
+
+        testClosestPointOnRay(r, points, Point(0,-100), "horizontal ray, with 3 points to check, and sorted from farthest to closest");
+    }
+    {
+        std::vector<Point> points;
+        points.push_back(Point(78,78));
+        points.push_back(Point(77, 77));
+        points.push_back(Point(79,79));
+
+        Ray r = Ray(Point(1,1), Point(10,10));
+
+        testClosestPointOnRay(r, points, Point(77,77), "angled ray, with 3 points to check, and scrambled order of points");
+    }
+    {
+        std::vector<Point> points;
+        points.push_back(Point(-100,75));
+        points.push_back(Point(37, -78));
+
+        Ray r = Ray(Point(37,-78), Point(-100,75));
+
+        testClosestPointOnRay(r, points, Point(37,-78), "angled ray, closest point is the base of ray");
+    }
 
     return 0;
 }

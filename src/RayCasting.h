@@ -65,7 +65,7 @@ struct Ray
     int   getDirection() const;
     bool  has(Point point) const;
     Line  toLine() const;
-    // Point closestPoint(std::vector<Point> & points, std::vector<LineSegment> & lineSegments);
+    Point closestPointOnRay(std::vector<Point> & points);
 };
 
 struct LineSegment
