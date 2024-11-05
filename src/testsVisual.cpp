@@ -111,6 +111,16 @@ int main()
                     isDragging = false;
                 }
             }
+
+            // Detect window resizing
+            if (event.type == sf::Event::Resized) 
+            {
+                sf::Vector2u newSize = window.getSize();
+
+                // Update the view to match the new window size
+                sf::FloatRect visibleArea(0, 0, newSize.x, newSize.y);
+                window.setView(sf::View(visibleArea));
+            }
         }
 
         window.clear();
