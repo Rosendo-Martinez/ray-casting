@@ -43,15 +43,21 @@ int main()
     std::vector<LineSegment> lineSegments;
     std::vector<Line> lines;
 
+
     points.push_back(Point(0,0));
-    points.push_back(Point(window.getSize().x, 0));
-    points.push_back(Point(window.getSize().x, window.getSize().y));
-    points.push_back(Point(0, window.getSize().y));
-    lines.push_back(Line(PI/4, Point(0,0)));
-    lines.push_back(Line(PI/2, Point(window.getSize().x, 0)));
-    lines.push_back(Line(PI, Point(0,window.getSize().y)));
-    lines.push_back(LineSegment(Point(window.getSize().x, 0),Point(0, window.getSize().y)).toLine());
-    lines.push_back(LineSegment(Point(0, 0),Point(window.getSize().x, window.getSize().y)).toLine());
+    lines.push_back(Line(0, Point(0,0)));
+    lines.push_back(Line(PI/2, Point(0,0)));
+
+
+    // points.push_back(Point(0,0));
+    // points.push_back(Point(window.getSize().x, 0));
+    // points.push_back(Point(window.getSize().x, window.getSize().y));
+    // points.push_back(Point(0, window.getSize().y));
+    // lines.push_back(Line(PI/4, Point(0,0)));
+    // lines.push_back(Line(PI/2, Point(window.getSize().x, 0)));
+    // lines.push_back(Line(PI, Point(0,window.getSize().y)));
+    // lines.push_back(LineSegment(Point(window.getSize().x, 0),Point(0, window.getSize().y)).toLine());
+    // lines.push_back(LineSegment(Point(0, 0),Point(window.getSize().x, window.getSize().y)).toLine());
 
     float scale = 1;
 
