@@ -11,29 +11,11 @@ void drawPoint(Point p, sf::RenderWindow & window)
     sf::CircleShape circle;
 
     circle.setRadius(radius);
-    circle.setPosition(sf::Vector2f(p.x + radius, p.y + radius));
+    circle.setPosition(sf::Vector2f(p.x - radius, p.y - radius));
     circle.setPointCount(50);
     circle.setFillColor(sf::Color::White);
 
     window.draw(circle);
-}
-
-void drawLine(Line l, sf::RenderWindow & window)
-{
-    sf::VertexArray line (sf::Lines, 2);
-
-    if (l.type() == VERTICAL)
-    {
-        line[0].position = sf::Vector2f(l.xIntercept(),0);
-        line[1].position = sf::Vector2f(l.xIntercept(),window.getSize().y);
-    }
-    else
-    {
-        line[0].position = sf::Vector2f(0, l.f(0));
-        line[1].position = sf::Vector2f(window.getSize().x, l.f(window.getSize().x));
-    }
-
-    window.draw(line);
 }
 
 void drawLineSegment(LineSegment ls, sf::RenderWindow & window)
@@ -55,11 +37,15 @@ int main()
     std::vector<LineSegment> lineSegments;
     std::vector<Line> lines;
 
-    points.push_back(Point(100,100));
-    lines.push_back(Line(PI/2, Point(201,0)));
-    lines.push_back(Line(PI - 0.5, Point(100, 500)));
-    lines.push_back(Line(0.5, Point(50,50)));
-    lineSegments.push_back(LineSegment(Point(50,120), Point(400,700)));
+    points.push_back(Point(0,0));
+    points.push_back(Point(window.getSize().x, 0));
+    points.push_back(Point(window.getSize().x, window.getSize().y));
+    points.push_back(Point(0, window.getSize().y));
+    lines.push_back(Line(PI/4, Point(0,0)));
+    lines.push_back(Line(PI/2, Point(window.getSize().x, 0)));
+    lines.push_back(Line(PI, Point(0,window.getSize().y)));
+    lines.push_back(LineSegment(Point(window.getSize().x, 0),Point(0, window.getSize().y)).toLine());
+    lines.push_back(LineSegment(Point(0, 0),Point(window.getSize().x, window.getSize().y)).toLine());
 
     float scale = 1;
 
@@ -113,17 +99,18 @@ int main()
 
         for (auto l : lines)
         {
+            Line scaledLine(l.angle, Point(l.p.x * scale, l.p.y * scale));
             LineSegment ls;
 
             if (l.type() == VERTICAL)
             {
-                ls.a = Point(l.p.x * scale, 0);
-                ls.b = Point(l.p.x * scale, window.getSize().y);
+                ls.a = Point(scaledLine.p.x, 0);
+                ls.b = Point(scaledLine.p.x, window.getSize().y);
             }
             else
             {
-                ls.a = Point(0, l.f(0) * scale);
-                ls.b = Point(window.getSize().x * scale, l.f(window.getSize().x) * scale);
+                ls.a = Point(0, scaledLine.f(0));
+                ls.b = Point(window.getSize().x, scaledLine.f(window.getSize().x));
             }
 
             drawLineSegment(ls, window);
