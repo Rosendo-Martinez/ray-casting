@@ -438,17 +438,24 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
     intersectionPoints.erase(std::unique(intersectionPoints.begin(), intersectionPoints.end()), intersectionPoints.end());
 }
 
-void getIntersections(Point rayBase, int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
+std::vector<Ray> getIntersectionsOfRays(Point rayBase, int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
 {
     if (rayCount == 0)
     {
         throw std::runtime_error("Ray count can not be zero.");
     }
 
+    std::vector<Ray> rays;
     float angleBetweenRays = 2 * PI / rayCount;
-
     for (int i = 0; i < rayCount; i++)
     {
-        getIntersections(Ray(angleBetweenRays * i, rayBase), lineSegments, intersectionPoints, intersectionLineSegments);
+        rays.push_back(Ray(angleBetweenRays * i, rayBase));
     }
+
+    for (auto r : rays)
+    {
+        getIntersections(r, lineSegments, intersectionPoints, intersectionLineSegments);
+    }
+
+    return rays;
 }
