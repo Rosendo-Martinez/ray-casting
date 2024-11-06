@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
-#include "RayCasting.h"
 #include <iostream>
+#include <vector>
+#include "RayCasting.h"
 
 
 class Render 
@@ -12,7 +13,8 @@ private:
     sf::Vector2f     windowPOSBeforeDrag;
     sf::Vector2f     mouseClick;
     sf::Vector2f     mouseHold;
-    float            m_scale = 1;
+    float            m_scale = 50;
+    std::vector<LineSegment> map;
 
     Point scale(const Point p) const
     {
@@ -98,6 +100,40 @@ private:
         return ls;
     }
 
+    void loadMap()
+    {
+        // eventual I'd like to load from a file, for now just hard code it.
+        
+        // outside walls
+        LineSegment ab = LineSegment(Point(0,0), Point(0,10));
+        LineSegment bc = LineSegment(Point(0,10), Point(15,10));
+        LineSegment cd = LineSegment(Point(15,10), Point(15,0));
+        LineSegment da = LineSegment(Point(15,0), Point(0,0));
+
+        // inner rect
+        LineSegment eg = LineSegment(Point(2,1), Point(2,9));
+        LineSegment gh = LineSegment(Point(2,9), Point(4,9));
+        LineSegment hf = LineSegment(Point(4,9), Point(4,1));
+        LineSegment fe = LineSegment(Point(4,1), Point(2,1));
+
+        // inner triangle
+        LineSegment jk = LineSegment(Point(9,5), Point(14,8));
+        LineSegment kl = LineSegment(Point(14,8), Point(14,2));
+        LineSegment lj = LineSegment(Point(14,2), Point(9,5));
+
+        map.push_back(ab);
+        map.push_back(bc);
+        map.push_back(cd);
+        map.push_back(da);
+        map.push_back(eg);
+        map.push_back(gh);
+        map.push_back(hf);
+        map.push_back(fe);
+        map.push_back(jk);
+        map.push_back(kl);
+        map.push_back(lj);
+    }
+
     void drawPoint(Point p)
     {
         const int radius = 3;
@@ -142,20 +178,38 @@ private:
             {
                 if (event.key.code == sf::Keyboard::Up)
                 {
-                    m_scale += .10f;
-
-                    if (m_scale > 4.f)
+                    if (m_scale > 10)
                     {
-                        m_scale = 4.f;
+                        m_scale += 10.f;
+                    }
+                    if (m_scale > 1)
+                    {
+                        m_scale += 1.f;
+                    }
+                    else 
+                    {
+                        m_scale += .10f;
                     }
                 }
                 if (event.key.code == sf::Keyboard::Down)
                 {
-                    m_scale -=.10f;
 
-                    if (m_scale < .1f)
+                    if (m_scale > 10)
                     {
-                        m_scale = .1f;
+                        m_scale -= 10.f;
+                    }
+                    if (m_scale > 1)
+                    {
+                        m_scale -= 1.f;
+                    }
+                    else
+                    {
+                        m_scale -= .10f;
+                    }
+
+                    if (m_scale < 0.1f)
+                    {
+                        m_scale = 0.1f;
                     }
                 }
             }
@@ -198,8 +252,8 @@ private:
         drawPoint(scale(Point(0,0)));
         drawLineSegment(toDrawableLineSegment(scale(Line(0, Point(0,0)))));
         drawLineSegment(toDrawableLineSegment(scale(Line(PI/2, Point(0,0)))));
-        drawLineSegment(toDrawableLineSegment(scale(Ray(PI/4, Point(100,100)))));
-        drawPoint(scale(Point(100,100)));
+        // drawLineSegment(toDrawableLineSegment(scale(Ray(PI/4, Point(100,100)))));
+        // drawPoint(scale(Point(100,100)));
 
         // std::vector<Point> points;
         // std::vector<LineSegment> lineSegments;
@@ -210,10 +264,10 @@ private:
         //     drawPoint(scale(p));
         // }
 
-        // for (auto ls : lineSegments)
-        // {
-        //     drawLineSegment(scale(ls));
-        // }
+        for (auto ls : map)
+        {
+            drawLineSegment(scale(ls));
+        }
 
         // for (auto l : lines)
         // {
@@ -233,6 +287,8 @@ public:
         windowPOS = sf::Vector2f(0.f,0.f);
         isDragging = false;
         windowPOSBeforeDrag = windowPOS;
+
+        loadMap();
     };
 
     void run() 
