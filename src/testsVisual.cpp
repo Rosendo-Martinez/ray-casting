@@ -29,6 +29,11 @@ private:
         return LineSegment(scale(ls.a), scale(ls.b));
     }
 
+    Ray scale(const Ray r) const
+    {
+        return Ray(r.angle, scale(r.base));
+    }
+
     LineSegment toDrawableLineSegment(const Line l) const
     {
         LineSegment ls;
@@ -41,6 +46,52 @@ private:
         else
         {
             ls.a = Point(windowPOS.x, l.f(windowPOS.x));
+            ls.b = Point(windowPOS.x + window.getSize().x, l.f(windowPOS.x + window.getSize().x));
+        }
+
+        return ls;
+    }
+
+    LineSegment toDrawableLineSegment(const Ray r) const
+    {
+        // Ray base is not on screen and can't cross it either
+        // Somewhat gimmicky solution
+        if ((r.getDirection() == NORTH_WEST || r.getDirection() == SOUTH_WEST) && r.base.x < windowPOS.x)
+        {
+            return LineSegment(r.base, r.base);
+        }
+        else if ((r.getDirection() == NORTH_EAST || r.getDirection() == SOUTH_EAST) && r.base.x > windowPOS.x + window.getSize().x)
+        {
+            return LineSegment(r.base, r.base);
+        }
+        else if (r.getDirection() == NORTH && r.base.y > windowPOS.y)
+        {
+            return LineSegment(r.base, r.base);
+        }
+        else if (r.getDirection() == SOUTH && r.base.y < windowPOS.y + window.getSize().y)
+        {
+            return LineSegment(r.base, r.base);
+        }
+
+        LineSegment ls;
+        Line l = r.toLine();
+
+        ls.a = r.base;
+
+        if (r.getDirection() == NORTH)
+        {
+            ls.b = Point(r.base.x, windowPOS.y);
+        }
+        else if (r.getDirection() == SOUTH)
+        {
+            ls.b = Point(r.base.x, windowPOS.y + window.getSize().y);
+        }
+        else if (r.getDirection() == NORTH_WEST || r.getDirection() == SOUTH_WEST)
+        {
+            ls.b = Point(windowPOS.x, l.f(windowPOS.x));
+        }
+        else if (r.getDirection() == NORTH_EAST || r.getDirection() == SOUTH_EAST)
+        {
             ls.b = Point(windowPOS.x + window.getSize().x, l.f(windowPOS.x + window.getSize().x));
         }
 
@@ -147,6 +198,8 @@ private:
         drawPoint(scale(Point(0,0)));
         drawLineSegment(toDrawableLineSegment(scale(Line(0, Point(0,0)))));
         drawLineSegment(toDrawableLineSegment(scale(Line(PI/2, Point(0,0)))));
+        drawLineSegment(toDrawableLineSegment(scale(Ray(PI/4, Point(100,100)))));
+        drawPoint(scale(Point(100,100)));
 
         // std::vector<Point> points;
         // std::vector<LineSegment> lineSegments;
