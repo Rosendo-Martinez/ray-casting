@@ -15,6 +15,10 @@ private:
     sf::Vector2f     mouseHold;
     float            m_scale = 50;
     std::vector<LineSegment> map;
+    std::vector<Ray> rays;
+    std::vector<Point> intersectionPoints;
+    std::vector<LineSegment> intersectionLineSegments;
+    Point rayBase = Point(7,5);
 
     Point scale(const Point p) const
     {
@@ -132,6 +136,9 @@ private:
         map.push_back(jk);
         map.push_back(kl);
         map.push_back(lj);
+
+
+        rays = getIntersectionsOfRays(rayBase, 12, map, intersectionPoints, intersectionLineSegments);
     }
 
     void drawPoint(Point p)
@@ -259,20 +266,25 @@ private:
         // std::vector<LineSegment> lineSegments;
         // std::vector<Line> lines;
 
-        // for (auto p : points)
-        // {
-        //     drawPoint(scale(p));
-        // }
-
         for (auto ls : map)
         {
             drawLineSegment(scale(ls));
         }
 
-        // for (auto l : lines)
-        // {
-        //     drawLineSegment(toDrawableLineSegment(scale(l)));
-        // }
+        for (auto r : rays)
+        {
+            drawLineSegment(toDrawableLineSegment(scale(r)));
+        }
+
+        for (auto p : intersectionPoints)
+        {
+            drawPoint(scale(p));
+        }
+
+        for (auto ls : intersectionLineSegments)
+        {
+            drawLineSegment((scale(ls)));
+        }
 
         window.display();
     }
