@@ -2,66 +2,42 @@
 #include "RayCasting.h"
 #include <iostream>
 
-// g++ -c visual.cpp
-// g++ visual.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
 
-void drawPoint(Point p, sf::RenderWindow & window, sf::Vector2f windowPOS)
+class Render 
 {
-    const int radius = 3;
-    sf::CircleShape circle;
+private:
+    sf::RenderWindow window;
+    sf::Vector2f     windowPOS;
+    bool             isDragging;
+    sf::Vector2f     windowPOSBeforeDrag;
+    sf::Vector2f     mouseClick;
+    sf::Vector2f     mouseHold;
+    float            scale = 1;
 
-    circle.setRadius(radius);
-    circle.setPosition(sf::Vector2f(p.x - radius, p.y - radius) - windowPOS);
-    circle.setPointCount(50);
-    circle.setFillColor(sf::Color::White);
+    void drawPoint(Point p)
+    {
+        const int radius = 3;
+        sf::CircleShape circle;
 
-    window.draw(circle);
-}
+        circle.setRadius(radius);
+        circle.setPosition(sf::Vector2f(p.x - radius, p.y - radius) - windowPOS);
+        circle.setPointCount(50);
+        circle.setFillColor(sf::Color::White);
 
-void drawLineSegment(LineSegment ls, sf::RenderWindow & window, sf::Vector2f windowPOS)
-{
-    sf::VertexArray lineSegment (sf::Lines, 2);
+        window.draw(circle);
+    }
 
-    lineSegment[0].position = sf::Vector2f(ls.a.x, ls.a.y) - windowPOS;
-    lineSegment[1].position = sf::Vector2f(ls.b.x, ls.b.y) - windowPOS;
+    void drawLineSegment(LineSegment ls)
+    {
+        sf::VertexArray lineSegment (sf::Lines, 2);
 
-    window.draw(lineSegment);
-}
+        lineSegment[0].position = sf::Vector2f(ls.a.x, ls.a.y) - windowPOS;
+        lineSegment[1].position = sf::Vector2f(ls.b.x, ls.b.y) - windowPOS;
 
-int main()
-{
-    sf::RenderWindow window(sf::VideoMode(1200, 800), "Window", sf::Style::Resize);
-    sf::Vector2f windowPOS(0.f,0.f);
-    window.setKeyRepeatEnabled(false);
+        window.draw(lineSegment);
+    }
 
-    bool isDragging = false;
-    sf::Vector2f windowPOSBeforeDrag = windowPOS;
-    sf::Vector2f mouseClick;
-    sf::Vector2f mouseHold;
-
-    std::vector<Point> points;
-    std::vector<LineSegment> lineSegments;
-    std::vector<Line> lines;
-
-
-    points.push_back(Point(0,0));
-    lines.push_back(Line(0, Point(0,0)));
-    lines.push_back(Line(PI/2, Point(0,0)));
-
-
-    // points.push_back(Point(0,0));
-    // points.push_back(Point(window.getSize().x, 0));
-    // points.push_back(Point(window.getSize().x, window.getSize().y));
-    // points.push_back(Point(0, window.getSize().y));
-    // lines.push_back(Line(PI/4, Point(0,0)));
-    // lines.push_back(Line(PI/2, Point(window.getSize().x, 0)));
-    // lines.push_back(Line(PI, Point(0,window.getSize().y)));
-    // lines.push_back(LineSegment(Point(window.getSize().x, 0),Point(0, window.getSize().y)).toLine());
-    // lines.push_back(LineSegment(Point(0, 0),Point(window.getSize().x, window.getSize().y)).toLine());
-
-    float scale = 1;
-
-    while (window.isOpen())
+    void userInput()
     {
         if (isDragging)
         {
@@ -128,17 +104,28 @@ int main()
                 window.setView(sf::View(visibleArea));
             }
         }
+    }
 
+    void render()
+    {
         window.clear();
+
+        std::vector<Point> points;
+        std::vector<LineSegment> lineSegments;
+        std::vector<Line> lines;
+
+        points.push_back(Point(0,0));
+        lines.push_back(Line(0, Point(0,0)));
+        lines.push_back(Line(PI/2, Point(0,0)));
 
         for (auto p : points)
         {
-            drawPoint(Point(p.x * scale, p.y * scale), window, windowPOS);
+            drawPoint(Point(p.x * scale, p.y * scale));
         }
 
         for (auto ls : lineSegments)
         {
-            drawLineSegment(LineSegment(Point(ls.a.x * scale, ls.a.y * scale), Point(ls.b.x * scale, ls.b.y * scale)), window, windowPOS);
+            drawLineSegment(LineSegment(Point(ls.a.x * scale, ls.a.y * scale), Point(ls.b.x * scale, ls.b.y * scale)));
         }
 
         for (auto l : lines)
@@ -157,11 +144,41 @@ int main()
                 ls.b = Point(windowPOS.x + window.getSize().x, scaledLine.f(windowPOS.x + window.getSize().x));
             }
 
-            drawLineSegment(ls, window, windowPOS);
+            drawLineSegment(ls);
         }
 
         window.display();
     }
+
+public:
+
+    Render() 
+    {
+        window.create(sf::VideoMode(1200, 800), "Window", sf::Style::Resize);
+        window.setKeyRepeatEnabled(false);
+
+        windowPOS = sf::Vector2f(0.f,0.f);
+        isDragging = false;
+        windowPOSBeforeDrag = windowPOS;
+
+
+    };
+
+    void run() 
+    {
+        while (window.isOpen())
+        {
+            userInput();
+            render();
+        }
+    };
+};
+
+
+int main()
+{
+    Render r;
+    r.run();
 
     return 0;
 }
