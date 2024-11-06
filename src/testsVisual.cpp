@@ -70,7 +70,6 @@ private:
         window.draw(lineSegment);
     }
 
-
     void userInput()
     {
         if (isDragging)
@@ -144,28 +143,29 @@ private:
     {
         window.clear();
 
-        std::vector<Point> points;
-        std::vector<LineSegment> lineSegments;
-        std::vector<Line> lines;
+        // Draw axis
+        drawPoint(scale(Point(0,0)));
+        drawLineSegment(toDrawableLineSegment(scale(Line(0, Point(0,0)))));
+        drawLineSegment(toDrawableLineSegment(scale(Line(PI/2, Point(0,0)))));
 
-        points.push_back(Point(0,0));
-        lines.push_back(Line(0, Point(0,0)));
-        lines.push_back(Line(PI/2, Point(0,0)));
+        // std::vector<Point> points;
+        // std::vector<LineSegment> lineSegments;
+        // std::vector<Line> lines;
 
-        for (auto p : points)
-        {
-            drawPoint(scale(p));
-        }
+        // for (auto p : points)
+        // {
+        //     drawPoint(scale(p));
+        // }
 
-        for (auto ls : lineSegments)
-        {
-            drawLineSegment(scale(ls));
-        }
+        // for (auto ls : lineSegments)
+        // {
+        //     drawLineSegment(scale(ls));
+        // }
 
-        for (auto l : lines)
-        {
-            drawLineSegment(toDrawableLineSegment(scale(l)));
-        }
+        // for (auto l : lines)
+        // {
+        //     drawLineSegment(toDrawableLineSegment(scale(l)));
+        // }
 
         window.display();
     }
@@ -180,8 +180,6 @@ public:
         windowPOS = sf::Vector2f(0.f,0.f);
         isDragging = false;
         windowPOSBeforeDrag = windowPOS;
-
-
     };
 
     void run() 
