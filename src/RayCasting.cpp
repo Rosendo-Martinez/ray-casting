@@ -437,3 +437,18 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
     // Remove duplicates using std::unique, which will use operator==
     intersectionPoints.erase(std::unique(intersectionPoints.begin(), intersectionPoints.end()), intersectionPoints.end());
 }
+
+void getIntersections(Point rayBase, int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
+{
+    if (rayCount == 0)
+    {
+        throw std::runtime_error("Ray count can not be zero.");
+    }
+
+    float angleBetweenRays = 2 * PI / rayCount;
+
+    for (int i = 0; i < rayCount; i++)
+    {
+        getIntersections(Ray(angleBetweenRays * i, rayBase), lineSegments, intersectionPoints, intersectionLineSegments);
+    }
+}
