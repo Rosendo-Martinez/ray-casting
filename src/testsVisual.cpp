@@ -29,6 +29,24 @@ private:
         return LineSegment(scale(ls.a), scale(ls.b));
     }
 
+    LineSegment toDrawableLineSegment(const Line l) const
+    {
+        LineSegment ls;
+
+        if (l.type() == VERTICAL)
+        {
+            ls.a = Point(l.p.x, windowPOS.y);
+            ls.b = Point(l.p.x, windowPOS.y + window.getSize().y);
+        }
+        else
+        {
+            ls.a = Point(windowPOS.x, l.f(windowPOS.x));
+            ls.b = Point(windowPOS.x + window.getSize().x, l.f(windowPOS.x + window.getSize().x));
+        }
+
+        return ls;
+    }
+
     void drawPoint(Point p)
     {
         const int radius = 3;
@@ -52,23 +70,6 @@ private:
         window.draw(lineSegment);
     }
 
-    LineSegment toDrawableLineSegment(Line l)
-    {
-        LineSegment ls;
-
-        if (l.type() == VERTICAL)
-        {
-            ls.a = Point(l.p.x, windowPOS.y);
-            ls.b = Point(l.p.x, windowPOS.y + window.getSize().y);
-        }
-        else
-        {
-            ls.a = Point(windowPOS.x, l.f(windowPOS.x));
-            ls.b = Point(windowPOS.x + window.getSize().x, l.f(windowPOS.x + window.getSize().x));
-        }
-
-        return ls;
-    }
 
     void userInput()
     {
