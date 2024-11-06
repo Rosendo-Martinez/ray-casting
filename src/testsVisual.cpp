@@ -12,7 +12,22 @@ private:
     sf::Vector2f     windowPOSBeforeDrag;
     sf::Vector2f     mouseClick;
     sf::Vector2f     mouseHold;
-    float            scale = 1;
+    float            m_scale = 1;
+
+    Point scale(const Point p) const
+    {
+        return Point(p.x * m_scale, p.y * m_scale);
+    }
+
+    Line scale(const Line l) const
+    {
+        return Line(l.angle, scale(l.p));
+    }
+
+    LineSegment scale(const LineSegment ls) const
+    {
+        return LineSegment(scale(ls.a), scale(ls.b));
+    }
 
     void drawPoint(Point p)
     {
@@ -37,6 +52,24 @@ private:
         window.draw(lineSegment);
     }
 
+    LineSegment toDrawableLineSegment(Line l)
+    {
+        LineSegment ls;
+
+        if (l.type() == VERTICAL)
+        {
+            ls.a = Point(l.p.x, windowPOS.y);
+            ls.b = Point(l.p.x, windowPOS.y + window.getSize().y);
+        }
+        else
+        {
+            ls.a = Point(windowPOS.x, l.f(windowPOS.x));
+            ls.b = Point(windowPOS.x + window.getSize().x, l.f(windowPOS.x + window.getSize().x));
+        }
+
+        return ls;
+    }
+
     void userInput()
     {
         if (isDragging)
@@ -58,20 +91,20 @@ private:
             {
                 if (event.key.code == sf::Keyboard::Up)
                 {
-                    scale += .10f;
+                    m_scale += .10f;
 
-                    if (scale > 4.f)
+                    if (m_scale > 4.f)
                     {
-                        scale = 4.f;
+                        m_scale = 4.f;
                     }
                 }
                 if (event.key.code == sf::Keyboard::Down)
                 {
-                    scale -=.10f;
+                    m_scale -=.10f;
 
-                    if (scale < .1f)
+                    if (m_scale < .1f)
                     {
-                        scale = .1f;
+                        m_scale = .1f;
                     }
                 }
             }
@@ -120,31 +153,17 @@ private:
 
         for (auto p : points)
         {
-            drawPoint(Point(p.x * scale, p.y * scale));
+            drawPoint(scale(p));
         }
 
         for (auto ls : lineSegments)
         {
-            drawLineSegment(LineSegment(Point(ls.a.x * scale, ls.a.y * scale), Point(ls.b.x * scale, ls.b.y * scale)));
+            drawLineSegment(scale(ls));
         }
 
         for (auto l : lines)
         {
-            Line scaledLine(l.angle, Point(l.p.x * scale, l.p.y * scale));
-            LineSegment ls;
-
-            if (l.type() == VERTICAL)
-            {
-                ls.a = Point(scaledLine.p.x, windowPOS.y);
-                ls.b = Point(scaledLine.p.x, windowPOS.y + window.getSize().y);
-            }
-            else
-            {
-                ls.a = Point(windowPOS.x, scaledLine.f(windowPOS.x));
-                ls.b = Point(windowPOS.x + window.getSize().x, scaledLine.f(windowPOS.x + window.getSize().x));
-            }
-
-            drawLineSegment(ls);
+            drawLineSegment(toDrawableLineSegment(scale(l)));
         }
 
         window.display();
