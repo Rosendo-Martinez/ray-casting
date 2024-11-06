@@ -141,7 +141,7 @@ private:
         rays = getIntersectionsOfRays(rayBase, 12, map, intersectionPoints, intersectionLineSegments);
     }
 
-    void drawPoint(Point p)
+    void drawPoint(Point p, sf::Color color = sf::Color::White)
     {
         const int radius = 3;
         sf::CircleShape circle;
@@ -149,17 +149,20 @@ private:
         circle.setRadius(radius);
         circle.setPosition(sf::Vector2f(p.x - radius, p.y - radius) - windowPOS);
         circle.setPointCount(50);
-        circle.setFillColor(sf::Color::White);
+        circle.setFillColor(color);
 
         window.draw(circle);
     }
 
-    void drawLineSegment(LineSegment ls)
+    void drawLineSegment(LineSegment ls, sf::Color color = sf::Color::White)
     {
         sf::VertexArray lineSegment (sf::Lines, 2);
 
         lineSegment[0].position = sf::Vector2f(ls.a.x, ls.a.y) - windowPOS;
         lineSegment[1].position = sf::Vector2f(ls.b.x, ls.b.y) - windowPOS;
+
+        lineSegment[0].color = color;
+        lineSegment[1].color = color;
 
         window.draw(lineSegment);
     }
@@ -256,9 +259,9 @@ private:
         window.clear();
 
         // Draw axis
-        drawPoint(scale(Point(0,0)));
-        drawLineSegment(toDrawableLineSegment(scale(Line(0, Point(0,0)))));
-        drawLineSegment(toDrawableLineSegment(scale(Line(PI/2, Point(0,0)))));
+        // drawPoint(scale(Point(0,0)));
+        drawLineSegment(toDrawableLineSegment(scale(Line(0, Point(0,0)))), sf::Color(128,128,128, 255));
+        drawLineSegment(toDrawableLineSegment(scale(Line(PI/2, Point(0,0)))), sf::Color(128,128,128, 255));
         // drawLineSegment(toDrawableLineSegment(scale(Ray(PI/4, Point(100,100)))));
         // drawPoint(scale(Point(100,100)));
 
@@ -273,12 +276,14 @@ private:
 
         for (auto r : rays)
         {
-            drawLineSegment(toDrawableLineSegment(scale(r)));
+            drawLineSegment(toDrawableLineSegment(scale(r)), sf::Color(255, 255, 0, 100));
         }
+
+        drawPoint(scale(rayBase), sf::Color(255,255,0,255));
 
         for (auto p : intersectionPoints)
         {
-            drawPoint(scale(p));
+            drawPoint(scale(p), sf::Color(255, 0, 0, 200));
         }
 
         for (auto ls : intersectionLineSegments)
