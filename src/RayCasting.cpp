@@ -376,7 +376,8 @@ int Ray::getDirection() const
 /**
  * Checks wether point lies on ray.
  * 
- * Warning: use's Line.has(), which has known problems with floating points errors.
+ * Warning: uses Line.has(), which has known problems with floating points errors.
+ * Thus, this function could return unexpected results due to floating points errors.
  */
 bool Ray::has(const Point point) const
 {   
@@ -443,13 +444,21 @@ Point Ray::closestPointOnRay(const std::vector<Point> & points) const
     return closestSoFar;
 }
 
-LineSegment::LineSegment() {}
+LineSegment::LineSegment() : a(Point(0,0)), b(Point(0,0)) {}
 
-LineSegment::LineSegment(Point a, Point b) : a(a), b(b) {}
+/**
+ * Creates a line segment that starts at point a and ends at point b.
+ */
+LineSegment::LineSegment(const Point a, const Point b) : a(a), b(b) {}
 
-bool LineSegment::has(Point point) const
+/**
+ * Checks if point lies on line segment.
+ * 
+ * Warning: uses Line.has(), which has known problems with floating points errors.
+ * Thus, this function could return unexpected results due to floating points errors.
+ */
+bool LineSegment::has(const Point point) const
 {
-    // Check if point is on line representation of line segment
     if (!toLine().has(point))
     {
         return false;
@@ -467,12 +476,21 @@ bool LineSegment::has(Point point) const
     return (point.x >= xRange[0] && point.x <= xRange[1]) && (point.y >= yRange[0] && point.y <= yRange[1]);
 }
 
+/**
+ * Returns the line that passes parallel through the line segment.
+ */
 Line LineSegment::toLine() const
 {
     float slope = (a.y - b.y) / (a.x - b.x);
     return Line(atan(slope), a);
 }
 
+/**
+ * Checks if two line segments are parallel, and
+ * have same endpoints.
+ * 
+ * Note: does not take into account floating point errors.
+ */
 bool LineSegment::operator==(const LineSegment& other) const
 {
     return (other.a == a && other.b == b) || (other.a == b && other.b == a);

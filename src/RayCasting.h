@@ -52,7 +52,6 @@ struct Line
     int   intersectionCount(const Line other) const;
 };
 
-
 struct Ray
 {
     float angle; // angle at which ray goes off from the positive x-axis
@@ -73,9 +72,9 @@ struct LineSegment
     Point a, b; // the endpoints of the line segment
 
     LineSegment();
-    LineSegment(Point a, Point b);
+    LineSegment(const Point a, const Point b);
 
-    bool has(Point point) const;
+    bool has(const Point point) const;
     Line toLine() const;
     bool operator==(const LineSegment& other) const;
 };
