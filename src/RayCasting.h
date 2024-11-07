@@ -59,7 +59,7 @@ struct Ray
     Ray(const Point base, const Point pointOnRay);
 
     RayDirection getDirection() const;
-    bool  has(const Point point) const;
+    bool  hasOverlap(const Point point) const;
     Line  toLine() const;
     Point closestPointOnRay(const std::vector<Point> & points) const;
 };
@@ -71,7 +71,7 @@ struct LineSegment
     LineSegment();
     LineSegment(const Point a, const Point b);
 
-    bool has(const Point point) const;
+    bool hasOverlap(const Point point) const;
     Line toLine() const;
     bool operator==(const LineSegment& other) const;
 };

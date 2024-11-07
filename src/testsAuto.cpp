@@ -110,14 +110,14 @@ void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegme
 
 void testLineSegmentHas(LineSegment ls, Point a, bool actual)
 {
-    bool result = ls.has(a);
+    bool result = ls.hasOverlap(a);
 
     std::cout << "Result = " << result << ", Actual = " << actual << "\n";
 }
 
 void testRayHas(Ray r, Point a, bool actual)
 {
-    bool result = r.has(a);
+    bool result = r.hasOverlap(a);
 
     std::cout << "Result = " << result << ", Actual = " << actual << "\n";
 }
@@ -201,9 +201,6 @@ int main(int argc, char* argv[])
     testLineHas(LineSegment(Point(0,0), Point(-10,-10)).toLine(), Point(-10,-10), true);
     
     std::cout << "Test: Ray.has()\n";
-    // ray but point is not on line representation or ray
-    testRayHas(Ray(Point(0,0), Point(4,2)), Point(4,-1098), false);
-    // Rest of tests have a point that is on the line representation of the ray.
     // ray pointing up with point
     testRayHas(Ray(Point(0,0), Point(0,10)), Point(0,4), true);
     // ray point down with point
@@ -228,8 +225,6 @@ int main(int argc, char* argv[])
     testLineSegmentHas(LineSegment(Point(1,1), Point(10,10)), Point(9,9), true);
     // a point that is on line, but not ls
     testLineSegmentHas(LineSegment(Point(-1,-1), Point(-9,-9)), Point(-10,-10), false);
-    // a point that is not on line or ls
-    testLineSegmentHas(LineSegment(Point(2,4), Point(43,301)), Point(12,-98), false);
 
     std::cout << "Test: getIntersections()\n";
     {

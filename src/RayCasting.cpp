@@ -374,18 +374,13 @@ RayDirection Ray::getDirection() const
 }
 
 /**
- * Checks wether point lies on ray.
+ * Checks if point has x- or y-overlap with ray.
  * 
- * Warning: uses Line.has(), which has known problems with floating points errors.
- * Thus, this function could return unexpected results due to floating points errors.
+ * Use to check if point that lies on line that is parallel and
+ * goes through base of ray is on the ray.
  */
-bool Ray::has(const Point point) const
+bool Ray::hasOverlap(const Point point) const
 {   
-    if (!Line(angle, base).has(point))
-    {
-        return false;
-    }
-
     const RayDirection dir = getDirection();
 
     if (dir == RayDirection::N)
@@ -452,18 +447,13 @@ LineSegment::LineSegment() : a(Point(0,0)), b(Point(0,0)) {}
 LineSegment::LineSegment(const Point a, const Point b) : a(a), b(b) {}
 
 /**
- * Checks if point lies on line segment.
+ * Checks if point has x- and y-overlap with line segment.
  * 
- * Warning: uses Line.has(), which has known problems with floating points errors.
- * Thus, this function could return unexpected results due to floating points errors.
+ * Use to check if point that lies on line that is parallel and
+ * goes through both endpoints of line segment is on the line segment.
  */
-bool LineSegment::has(const Point point) const
+bool LineSegment::hasOverlap(const Point point) const
 {
-    if (!toLine().has(point))
-    {
-        return false;
-    }
-
     float xRange[2];
     xRange[0] = a.x < b.x ? a.x : b.x;
     xRange[1] = a.x > b.x ? a.x : b.x;
@@ -513,7 +503,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
         else if (count == IntersectionCount::One)
         {
             const Point inter = r.toLine().intersection(ls.toLine());
-            if (r.has(inter) && ls.has(inter))
+            if (r.hasOverlap(inter) && ls.hasOverlap(inter))
             {
                 intersectionPoints.push_back(inter);
             }
@@ -521,17 +511,17 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
         else // many intersections
         {
             // ray intersects with entire line segment
-            if (r.has(ls.a) && r.has(ls.b))
+            if (r.hasOverlap(ls.a) && r.hasOverlap(ls.b))
             {
                 intersectionLineSegments.push_back(ls);
             }
             // ray's base is a point between the endpoints of the line segment [base, ls.a]
-            else if (r.has(ls.a))
+            else if (r.hasOverlap(ls.a))
             {
                 intersectionLineSegments.push_back(LineSegment(ls.a, r.base));
             }
             // ray's base is a point between the endpoints of the line segment [base, ls.b]
-            else if (r.has(ls.b))
+            else if (r.hasOverlap(ls.b))
             {
                 intersectionLineSegments.push_back(LineSegment(ls.b, r.base));
             }
