@@ -187,11 +187,11 @@ int main(int argc, char* argv[])
     testToRay(Point(0,5), Point(7,12), Ray(PI/4, Point(0,5)));
 
     std::cout << "Test: getDirection()\n";
-    testGetDirection(Ray(PI, Point(0,0)), RayDirection::West);
-    testGetDirection(Ray(-PI/2, Point(0,0)), RayDirection::South);
-    testGetDirection(Ray(PI/4, Point(0,0)), RayDirection::NorthEast);
-    testGetDirection(Ray(-PI/4 - 4 * PI, Point(0,0)), RayDirection::SouthEast);
-    testGetDirection(Ray(PI/4 + 2 * PI, Point(0,0)), RayDirection::NorthEast);
+    testGetDirection(Ray(PI, Point(0,0)), RayDirection::W);
+    testGetDirection(Ray(-PI/2, Point(0,0)), RayDirection::S);
+    testGetDirection(Ray(PI/4, Point(0,0)), RayDirection::NE);
+    testGetDirection(Ray(-PI/4 - 4 * PI, Point(0,0)), RayDirection::SE);
+    testGetDirection(Ray(PI/4 + 2 * PI, Point(0,0)), RayDirection::NE);
 
     std::cout << "Test: Line.has()\n";
     testLineHas(LineSegment(Point(1,1),Point(2,2)).toLine(), Point(6,6), true);

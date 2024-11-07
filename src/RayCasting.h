@@ -4,7 +4,7 @@ const float PI = 3.14159265359f;
 
 enum class RayDirection
 {
-    North, East, South, West, NorthEast, SouthEast, NorthWest, SouthWest
+    N, E, S, W, NE, SE, NW, SW
 };
 
 enum class IntersectionCount

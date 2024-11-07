@@ -317,10 +317,10 @@ Ray::Ray(const Point base, const Point pointOnRay)
 /**
  * The direction at which the ray goes.
  * 
- * North is positive y-axis.
- * South is negative y-axis.
- * East is positive x-axis.
- * West is negative x-axis.
+ * N is positive y-axis.
+ * S is negative y-axis.
+ * E is positive x-axis.
+ * W is negative x-axis.
  */
 RayDirection Ray::getDirection() const
 {
@@ -341,35 +341,35 @@ RayDirection Ray::getDirection() const
 
     if (normalizedAngle == 0 || normalizedAngle == 2 * PI)
     {
-        return RayDirection::East;
+        return RayDirection::E;
     }
     else if (normalizedAngle == 3 * PI / 2)
     {
-        return RayDirection::South;
+        return RayDirection::S;
     }
     else if (normalizedAngle == PI)
     {
-        return RayDirection::West;
+        return RayDirection::W;
     }
     else if (normalizedAngle == PI/2)
     {
-        return RayDirection::North;
+        return RayDirection::N;
     }
     else if (normalizedAngle > 0 && normalizedAngle < PI/2)
     {
-        return RayDirection::NorthEast;
+        return RayDirection::NE;
     }
     else if (normalizedAngle > PI/2 && normalizedAngle < PI)
     {
-        return RayDirection::NorthWest;
+        return RayDirection::NW;
     }
     else if (normalizedAngle > PI && normalizedAngle < 3 * PI / 2)
     {
-        return RayDirection::SouthWest;
+        return RayDirection::SW;
     }
     else
     {
-        return RayDirection::SouthEast;
+        return RayDirection::SE;
     }
 }
 
@@ -388,15 +388,15 @@ bool Ray::has(const Point point) const
 
     const RayDirection dir = getDirection();
 
-    if (dir == RayDirection::North)
+    if (dir == RayDirection::N)
     {
         return point.y >= base.y;
     }
-    else if (dir == RayDirection::East || dir == RayDirection::NorthEast || dir == RayDirection::SouthEast)
+    else if (dir == RayDirection::E || dir == RayDirection::NE || dir == RayDirection::SE)
     {
         return point.x >= base.x;
     }
-    else if (dir == RayDirection::South)
+    else if (dir == RayDirection::S)
     {
         return point.y <= base.y;
     }

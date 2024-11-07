@@ -63,19 +63,19 @@ private:
     {
         // Ray base is not on screen and can't cross it either
         // Somewhat gimmicky solution
-        if ((r.getDirection() == RayDirection::NorthWest || r.getDirection() == RayDirection::SouthWest || r.getDirection() == RayDirection::West) && r.base.x < windowPOS.x)
+        if ((r.getDirection() == RayDirection::NW || r.getDirection() == RayDirection::SW || r.getDirection() == RayDirection::W) && r.base.x < windowPOS.x)
         {
             return LineSegment(r.base, r.base);
         }
-        else if ((r.getDirection() == RayDirection::NorthEast || r.getDirection() == RayDirection::SouthEast || r.getDirection() == RayDirection::East) && r.base.x > windowPOS.x + window.getSize().x)
+        else if ((r.getDirection() == RayDirection::NE || r.getDirection() == RayDirection::SE || r.getDirection() == RayDirection::E) && r.base.x > windowPOS.x + window.getSize().x)
         {
             return LineSegment(r.base, r.base);
         }
-        else if (r.getDirection() == RayDirection::North && r.base.y < windowPOS.y)
+        else if (r.getDirection() == RayDirection::N && r.base.y < windowPOS.y)
         {
             return LineSegment(r.base, r.base);
         }
-        else if (r.getDirection() == RayDirection::South && r.base.y > windowPOS.y + window.getSize().y)
+        else if (r.getDirection() == RayDirection::S && r.base.y > windowPOS.y + window.getSize().y)
         {
             return LineSegment(r.base, r.base);
         }
@@ -85,19 +85,19 @@ private:
 
         ls.a = r.base;
 
-        if (r.getDirection() == RayDirection::North)
+        if (r.getDirection() == RayDirection::N)
         {
             ls.b = Point(r.base.x, windowPOS.y);
         }
-        else if (r.getDirection() == RayDirection::South)
+        else if (r.getDirection() == RayDirection::S)
         {
             ls.b = Point(r.base.x, windowPOS.y + window.getSize().y);
         }
-        else if (r.getDirection() == RayDirection::NorthWest || r.getDirection() == RayDirection::SouthWest || r.getDirection() == RayDirection::West)
+        else if (r.getDirection() == RayDirection::NW || r.getDirection() == RayDirection::SW || r.getDirection() == RayDirection::W)
         {
             ls.b = Point(windowPOS.x, l.f(windowPOS.x));
         }
-        else if (r.getDirection() == RayDirection::NorthEast || r.getDirection() == RayDirection::SouthEast || r.getDirection() == RayDirection::East)
+        else if (r.getDirection() == RayDirection::NE || r.getDirection() == RayDirection::SE || r.getDirection() == RayDirection::E)
         {
             ls.b = Point(windowPOS.x + window.getSize().x, l.f(windowPOS.x + window.getSize().x));
         }
