@@ -20,6 +20,7 @@ private:
     std::vector<LineSegment> intersectionLineSegments;
     std::vector<Point> fan;
     Point rayBase = Point(7,5);
+    bool isHoldingRightClick = false;
 
     Point scale(const Point p) const
     {
@@ -178,6 +179,20 @@ private:
             windowPOS += mouseClick - mouseHold;
         }
 
+        if (isHoldingRightClick)
+        {
+            rays.clear();
+            intersectionPoints.clear();
+            intersectionLineSegments.clear();
+            fan.clear();
+
+            // Descale mouse pos and window pos
+            rayBase = Point(sf::Mouse::getPosition(window).x/m_scale + windowPOS.x/m_scale, sf::Mouse::getPosition(window).y/m_scale + windowPOS.y/m_scale);
+
+            rays = getIntersectionsOfRays(rayBase, 100, map, intersectionPoints, intersectionLineSegments);
+            getClosestIntersectionsOfRays(rayBase, 100, map, fan);
+        }
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -234,6 +249,10 @@ private:
                     windowPOSBeforeDrag = windowPOS;
                     mouseClick = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
                 }
+                else if (event.mouseButton.button == sf::Mouse::Right)
+                {
+                    isHoldingRightClick = true;
+                }
             }
 
             if (event.type == sf::Event::MouseButtonReleased)
@@ -241,6 +260,10 @@ private:
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
                     isDragging = false;
+                }
+                else if (event.mouseButton.button == sf::Mouse::Right)
+                {
+                    isHoldingRightClick = false;
                 }
             }
 
