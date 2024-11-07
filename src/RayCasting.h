@@ -2,15 +2,6 @@
 
 const float PI = 3.14159265359f;
 
-const int NORTH = 0;
-const int EAST = 1;
-const int SOUTH = 2;
-const int WEST = 3;
-const int NORTH_EAST = 4;
-const int SOUTH_EAST = 5;
-const int NORTH_WEST = 6;
-const int SOUTH_WEST = 7;
-
 enum class RayDirection
 {
     North, East, South, West, NorthEast, SouthEast, NorthWest, SouthWest
