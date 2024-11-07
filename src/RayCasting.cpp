@@ -294,11 +294,16 @@ int Line::intersectionCount(const Line other) const
     }
 }
 
-Ray::Ray() {}
+Ray::Ray() : angle(0), base(Point(0,0)) {}
 
-Ray::Ray(float angle, Point base) : angle(angle), base(base) {}
+Ray::Ray(const float angle, const Point base) : angle(angle), base(base) {}
 
-Ray::Ray(Point base, Point pointOnRay)
+/**
+ * Creates a ray with the given base, and which passes through the second point.
+ * 
+ * Warning: base and pointOnRay can not be equal.
+ */
+Ray::Ray(const Point base, const Point pointOnRay)
 {
     if (base.x == pointOnRay.x && base.y == pointOnRay.y)
     {
@@ -309,11 +314,16 @@ Ray::Ray(Point base, Point pointOnRay)
     this->base = base;
 }
 
+/**
+ * The direction at which the ray goes.
+ * 
+ * North is positive y-axis.
+ * South is negative y-axis.
+ * East is positive x-axis.
+ * West is negative x-axis.
+ */
 int Ray::getDirection() const
 {
-    // Idea: Maybe angle member should always be normalized?
-    //       Then I wouldn't need to normalize it here.
-
     float normalizedAngle = angle;
 
     // Normalize by: abs(angle) <= 2 * PI 
@@ -363,7 +373,12 @@ int Ray::getDirection() const
     }
 }
 
-bool Ray::has(Point point) const
+/**
+ * Checks wether point lies on ray.
+ * 
+ * Warning: use's Line.has(), which has known problems with floating points errors.
+ */
+bool Ray::has(const Point point) const
 {   
     if (!Line(angle, base).has(point))
     {
@@ -390,28 +405,30 @@ bool Ray::has(Point point) const
     }
 }
 
+/**
+ * Returns a line that is parallel and goes through 
+ * the base of this ray.
+ */
 Line Ray::toLine() const
 {
     return Line(angle, base);
 }
 
-Point Ray::closestPointOnRay(std::vector<Point> & points)
+/**
+ * Given a set of points that LIE on the ray,
+ * returns the closest to the base.
+ * 
+ * Warning: due to floating point errors, does not check if 
+ * the given points all lie on the ray!
+ * 
+ * Warning: throws error of points.size() is zero.
+ */
+Point Ray::closestPointOnRay(const std::vector<Point> & points) const
 {
     if (points.size() == 0)
     {
         throw std::runtime_error("Points vector is size zero. This is not allowed.");
     }
-
-    // Disabled due to causing floating point errors
-    // for (auto p : points)
-    // {
-    //     if (!has(p))
-    //     {
-    //         throw std::runtime_error("Point must lie on ray.");
-    //     }
-    // }
-
-    // WARNING: assumes that all points passed lie on ray
 
     Point closestSoFar = points.front();
 

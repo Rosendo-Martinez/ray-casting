@@ -55,17 +55,17 @@ struct Line
 
 struct Ray
 {
-    float angle; // angle at which ray goes off
+    float angle; // angle at which ray goes off from the positive x-axis
     Point base; // the base of the ray
 
     Ray();
-    Ray(float angle, Point base);
-    Ray(Point base, Point pointOnRay);
+    Ray(const float angle, const Point base);
+    Ray(const Point base, const Point pointOnRay);
 
     int   getDirection() const;
-    bool  has(Point point) const;
+    bool  has(const Point point) const;
     Line  toLine() const;
-    Point closestPointOnRay(std::vector<Point> & points);
+    Point closestPointOnRay(const std::vector<Point> & points) const;
 };
 
 struct LineSegment
