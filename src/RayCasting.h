@@ -2,10 +2,6 @@
 
 const float PI = 3.14159265359f;
 
-const int ZERO = 0;
-const int ONE = 1;
-const int MANY = 2;
-
 const int NORTH = 0;
 const int EAST = 1;
 const int SOUTH = 2;
@@ -14,6 +10,11 @@ const int NORTH_EAST = 4;
 const int SOUTH_EAST = 5;
 const int NORTH_WEST = 6;
 const int SOUTH_WEST = 7;
+
+enum class IntersectionCount
+{
+    Zero, One, Many
+};
 
 enum class LineTypes
 {
@@ -49,7 +50,7 @@ struct Line
     float normalizedAngle() const;
     Point intersection(const Line other) const;
     bool  isParallel(const Line other) const;
-    int   intersectionCount(const Line other) const;
+    IntersectionCount intersectionCount(const Line other) const;
 };
 
 struct Ray

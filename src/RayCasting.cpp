@@ -206,7 +206,7 @@ float Line::normalizedAngle() const
  */
 Point Line::intersection(const Line other) const
 {
-    if (intersectionCount(other) != ONE)
+    if (intersectionCount(other) != IntersectionCount::One)
     {
         throw std::runtime_error("Lines have zero or many intersection points but still called intersection().");
     }
@@ -278,19 +278,19 @@ bool Line::isParallel(const Line other) const
  * 
  * Possible options: zero, one, or many.
  */
-int Line::intersectionCount(const Line other) const
+IntersectionCount Line::intersectionCount(const Line other) const
 {
     if (!isParallel(other))
     {
-        return ONE;
+        return IntersectionCount::One;
     }
     else if (type() == LineTypes::Horizontal)
     {
-        return yIntercept() == other.yIntercept() ? MANY : ZERO;
+        return yIntercept() == other.yIntercept() ? IntersectionCount::Many : IntersectionCount::Zero;
     }
     else // vertical or angled
     {
-        return xIntercept() == other.xIntercept() ? MANY : ZERO;
+        return xIntercept() == other.xIntercept() ? IntersectionCount::Many : IntersectionCount::Zero;
     }
 }
 
@@ -503,14 +503,14 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
 {
     for (const LineSegment& ls : lineSegments)
     {
-        int count = r.toLine().intersectionCount(ls.toLine());
+        IntersectionCount count = r.toLine().intersectionCount(ls.toLine());
 
-        if (count == ZERO)
+        if (count == IntersectionCount::Zero)
         {
             // Ray and line segment are parallel and do not overlap
             continue;
         }
-        else if (count == ONE)
+        else if (count == IntersectionCount::One)
         {
             const Point inter = r.toLine().intersection(ls.toLine());
             if (r.has(inter) && ls.has(inter))

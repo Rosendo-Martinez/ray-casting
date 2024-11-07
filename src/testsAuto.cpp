@@ -150,18 +150,18 @@ void testLineIntersection(LineSegment l1, LineSegment l2, Point actual)
     std::cout << "Result = (" << result.x << "," << result.y << "), Actual = (" << actual.x << "," << actual.y << ")\n";
 }
 
-void testIntersectionCount(LineSegment a, LineSegment b, int actual)
+void testIntersectionCount(LineSegment a, LineSegment b, IntersectionCount actual)
 {
-    int result = a.toLine().intersectionCount(b.toLine());
+    IntersectionCount result = a.toLine().intersectionCount(b.toLine());
 
-    std::cout << "Result = " << (result == ZERO ? "ZERO" : result == MANY ? "MANY" : "ONE") << ", Actual = " << (actual == ZERO ? "ZERO" : actual == MANY ? "MANY" : "ONE") << "\n";
+    std::cout << "Result = " << (result == IntersectionCount::Zero ? "ZERO" : result == IntersectionCount::Many ? "MANY" : "ONE") << ", Actual = " << (actual == IntersectionCount::Zero ? "ZERO" : actual == IntersectionCount::Many ? "MANY" : "ONE") << "\n";
 }
 
-void testIntersectionCount(Line a, Line b, int actual)
+void testIntersectionCount(Line a, Line b, IntersectionCount actual)
 {
-    int result = a.intersectionCount(b);
+    IntersectionCount result = a.intersectionCount(b);
 
-    std::cout << "Result = " << (result == ZERO ? "ZERO" : result == MANY ? "MANY" : "ONE") << ", Actual = " << (actual == ZERO ? "ZERO" : actual == MANY ? "MANY" : "ONE") << "\n";
+    std::cout << "Result = " << (result == IntersectionCount::Zero ? "ZERO" : result == IntersectionCount::Many ? "MANY" : "ONE") << ", Actual = " << (actual == IntersectionCount::Zero ? "ZERO" : actual == IntersectionCount::Many ? "MANY" : "ONE") << "\n";
 }
 
 int main(int argc, char* argv[]) 
@@ -174,10 +174,10 @@ int main(int argc, char* argv[])
     testLineIntersection(LineSegment(Point(15,14), Point(11,-4)), LineSegment(Point(0,0), Point(26,10)), Point(13,5));
 
     std::cout << "Tests: intersectionCount()\n";
-    testIntersectionCount(LineSegment(Point(0,0), Point(2,4)), LineSegment(Point(5,0), Point(7,4)), ZERO);
-    testIntersectionCount(LineSegment(Point(0,0), Point(10,0)), LineSegment(Point(5,-5), Point(5,5)), ONE);
-    testIntersectionCount(LineSegment(Point(-7,-7), Point(0,0)), LineSegment(Point(0,0), Point(7,7)), MANY);
-    testIntersectionCount(Line(PI, Point(0,0)), Line(0, Point(0,0)), MANY);
+    testIntersectionCount(LineSegment(Point(0,0), Point(2,4)), LineSegment(Point(5,0), Point(7,4)), IntersectionCount::Zero);
+    testIntersectionCount(LineSegment(Point(0,0), Point(10,0)), LineSegment(Point(5,-5), Point(5,5)), IntersectionCount::One);
+    testIntersectionCount(LineSegment(Point(-7,-7), Point(0,0)), LineSegment(Point(0,0), Point(7,7)), IntersectionCount::Many);
+    testIntersectionCount(Line(PI, Point(0,0)), Line(0, Point(0,0)), IntersectionCount::Many);
 
     std::cout << "Test: toRay()\n";
     testToRay(Point(5,7), Point(5,21), Ray(PI/2, Point(5,7)));
