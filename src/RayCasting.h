@@ -11,6 +11,11 @@ const int SOUTH_EAST = 5;
 const int NORTH_WEST = 6;
 const int SOUTH_WEST = 7;
 
+enum class RayDirection
+{
+    North, East, South, West, NorthEast, SouthEast, NorthWest, SouthWest
+};
+
 enum class IntersectionCount
 {
     Zero, One, Many
@@ -62,7 +67,7 @@ struct Ray
     Ray(const float angle, const Point base);
     Ray(const Point base, const Point pointOnRay);
 
-    int   getDirection() const;
+    RayDirection getDirection() const;
     bool  has(const Point point) const;
     Line  toLine() const;
     Point closestPointOnRay(const std::vector<Point> & points) const;

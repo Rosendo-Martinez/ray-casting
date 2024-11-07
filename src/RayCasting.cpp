@@ -322,7 +322,7 @@ Ray::Ray(const Point base, const Point pointOnRay)
  * East is positive x-axis.
  * West is negative x-axis.
  */
-int Ray::getDirection() const
+RayDirection Ray::getDirection() const
 {
     float normalizedAngle = angle;
 
@@ -341,35 +341,35 @@ int Ray::getDirection() const
 
     if (normalizedAngle == 0 || normalizedAngle == 2 * PI)
     {
-        return EAST;
+        return RayDirection::East;
     }
     else if (normalizedAngle == 3 * PI / 2)
     {
-        return SOUTH;
+        return RayDirection::South;
     }
     else if (normalizedAngle == PI)
     {
-        return WEST;
+        return RayDirection::West;
     }
     else if (normalizedAngle == PI/2)
     {
-        return NORTH;
+        return RayDirection::North;
     }
     else if (normalizedAngle > 0 && normalizedAngle < PI/2)
     {
-        return NORTH_EAST;
+        return RayDirection::NorthEast;
     }
     else if (normalizedAngle > PI/2 && normalizedAngle < PI)
     {
-        return NORTH_WEST;
+        return RayDirection::NorthWest;
     }
     else if (normalizedAngle > PI && normalizedAngle < 3 * PI / 2)
     {
-        return SOUTH_WEST;
+        return RayDirection::SouthWest;
     }
     else
     {
-        return SOUTH_EAST;
+        return RayDirection::SouthEast;
     }
 }
 
@@ -386,17 +386,17 @@ bool Ray::has(const Point point) const
         return false;
     }
 
-    const int dir = getDirection();
+    const RayDirection dir = getDirection();
 
-    if (dir == NORTH)
+    if (dir == RayDirection::North)
     {
         return point.y >= base.y;
     }
-    else if (dir == EAST || dir == NORTH_EAST || dir == SOUTH_EAST)
+    else if (dir == RayDirection::East || dir == RayDirection::NorthEast || dir == RayDirection::SouthEast)
     {
         return point.x >= base.x;
     }
-    else if (dir == SOUTH)
+    else if (dir == RayDirection::South)
     {
         return point.y <= base.y;
     }
