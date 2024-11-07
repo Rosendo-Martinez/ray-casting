@@ -7,16 +7,30 @@ bool almostEqual(float a, float b, float epsilon = 1e-5f) {
     return std::fabs(a - b) < epsilon;
 }
 
-Point::Point() {}
+/**
+ * Creates a point with coordinates (0,0).
+ */
+Point::Point() : x(0), y(0) {}
 
-Point::Point(float x, float y) : x(x), y(y) {}
+/**
+ * Creates a point with given coordinates.
+ */
+Point::Point(const float x, const float y) : x(x), y(y) {}
 
-bool Point::operator==(const Point& other) const
+/**
+ * Checks if two points are equal.
+ * 
+ * Warning: floating point errors could cause unexpected results.
+ */
+bool Point::operator==(const Point other) const
 {
     return other.x == x && other.y == y;
 }
 
-float Point::distSquared(Point other) const
+/**
+ * Returns the distance squared between two points.
+ */
+float Point::distSquared(const Point other) const
 {
     return (other.x - x) * (other.x - x) + (other.y - y) * (other.y - y);
 }

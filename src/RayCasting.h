@@ -25,10 +25,10 @@ struct Point
     float x, y;
 
     Point();
-    Point(float x, float y);
+    Point(const float x, const float y);
 
-    bool  operator==(const Point& other) const;
-    float distSquared(Point other) const;
+    bool  operator==(const Point other) const;
+    float distSquared(const Point other) const;
 };
 
 struct Line
