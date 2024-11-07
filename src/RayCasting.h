@@ -37,19 +37,19 @@ struct Line
     Point p; // some point on the line
 
     Line();
-    Line(float angle, Point p);
+    Line(const float angle, const Point p);
 
     float xIntercept() const;
     float yIntercept() const;
-    float f(float x) const;
-    float fInverse(float y) const;
+    float f(const float x) const;
+    float fInverse(const float y) const;
     float slope() const;
     int   type() const;
-    bool  has(Point a) const;
+    bool  has(const Point a) const;
     float normalizedAngle() const;
-    Point intersection(Line other) const;
-    bool  isParallel(Line other) const;
-    int   intersectionCount(Line other) const;
+    Point intersection(const Line other) const;
+    bool  isParallel(const Line other) const;
+    int   intersectionCount(const Line other) const;
 };
 
 

@@ -35,10 +35,21 @@ float Point::distSquared(const Point other) const
     return (other.x - x) * (other.x - x) + (other.y - y) * (other.y - y);
 }
 
-Line::Line() {}
+/**
+ * Creates the default line, a horizontal line that goes through the origin.
+ */
+Line::Line() : angle(0), p(Point(0,0)) {}
 
-Line::Line(float angle, Point p) : angle(angle), p(p) {}
+/**
+ * Creates a line with the given angle that goes through the given point.
+ */
+Line::Line(const float angle, const Point p) : angle(angle), p(p) {}
 
+/**
+ * Returns the x-intercept, the x-value at which the line crosses the x-axis.
+ * 
+ * Warning: throws error if line is horizontal.
+ */
 float Line::xIntercept() const
 {
     if (type() == HORIZONTAL)
@@ -54,6 +65,11 @@ float Line::xIntercept() const
     return -(yIntercept()/slope());
 }
 
+/**
+ * Returns the y-intercept, the y-value at which the line crosses the y-axis.
+ * 
+ * Warning: throws error if line is vertical.
+ */
 float Line::yIntercept() const
 {
     if (type() == VERTICAL)
@@ -69,7 +85,12 @@ float Line::yIntercept() const
     return p.y - slope() * p.x;
 }
 
-float Line::f(float x) const
+/**
+ * Returns the y-value of the point (x,f(x)).
+ * 
+ * Warning: throws error if line is vertical.
+ */
+float Line::f(const float x) const
 {
     if (type() == VERTICAL)
     {
@@ -79,7 +100,12 @@ float Line::f(float x) const
     return slope() * x + yIntercept();
 }
 
-float Line::fInverse(float y) const
+/**
+ * Returns the x-value of the point (fInverse(y), y).
+ * 
+ * Warning: throws error if line is horizontal.
+ */
+float Line::fInverse(const float y) const
 {
     if (type() == HORIZONTAL)
     {
@@ -89,6 +115,14 @@ float Line::fInverse(float y) const
     return (y - yIntercept())/slope();
 }
 
+/**
+ * Returns the slope of the line.
+ * 
+ * The m in the equation:
+ *   y = m*x + b
+ * 
+ * Warning: throws error if line is vertical.
+ */
 float Line::slope() const
 {
     if (type() == VERTICAL)
@@ -100,11 +134,12 @@ float Line::slope() const
 }
 
 /**
- * Type of line.
+ * Returns type of line.
  * 
- * -1 is horizontal
- *  0 is angled
- *  1 is vertical
+ * Types:
+ *   Horizontal
+ *   Angled
+ *   Vertical
  */
 int Line::type() const
 {
@@ -125,7 +160,14 @@ int Line::type() const
     }
 }
 
-bool Line::has(Point a) const
+/**
+ * Checks if the line has the point.
+ * 
+ * Warning: this function tries to account for floating point errors,
+ * however, its not perfect, so use this function only if you must, because
+ * it could return unexpected results!
+ */
+bool Line::has(const Point a) const
 {
     if (type() == VERTICAL)
     {
@@ -135,6 +177,9 @@ bool Line::has(Point a) const
     return almostEqual(f(a.x), a.y);
 }
 
+/**
+ * Returns normalized angle of line.
+ */
 float Line::normalizedAngle() const
 {
     float normalizedAngle = angle;
@@ -154,7 +199,14 @@ float Line::normalizedAngle() const
     return normalizedAngle;
 }
 
-Point Line::intersection(Line other) const
+/**
+ * The intersection point of the two lines.
+ * 
+ * Warning: assumes that lines intersect at ONE and ONLY one point.
+ * If this is not the case, then no errors are thrown, and returned value
+ * is likely WRONG.
+ */
+Point Line::intersection(const Line other) const
 {
     // WARNING: assumes lines intersect at one and only one point
 
@@ -198,7 +250,10 @@ Point Line::intersection(Line other) const
     return inter;
 }
 
-bool Line::isParallel(Line other) const
+/**
+ * Checks if the two lines are parallel.
+ */
+bool Line::isParallel(const Line other) const
 {
     float thisNorm = normalizedAngle();
     float otherNorm = other.normalizedAngle();
@@ -217,7 +272,12 @@ bool Line::isParallel(Line other) const
     }
 }
 
-int Line::intersectionCount(Line other) const
+/**
+ * Determines the number of intersections the two lines have.
+ * 
+ * Possible options: zero, one, or many.
+ */
+int Line::intersectionCount(const Line other) const
 {
     if (!isParallel(other))
     {
