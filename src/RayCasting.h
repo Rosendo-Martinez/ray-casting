@@ -79,8 +79,10 @@ struct LineSegment
     bool operator==(const LineSegment& other) const;
 };
 
+// Functions to use for ray-intersection detection:
+
 void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments);
 
-std::vector<Ray> getIntersectionsOfRays(Point rayBase, int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments);
+std::vector<Ray> getIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments);
 
-void getClosestIntersectionsOfRays(Point rayBase, int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections);
+void getClosestIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections);

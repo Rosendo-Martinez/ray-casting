@@ -496,6 +496,9 @@ bool LineSegment::operator==(const LineSegment& other) const
     return (other.a == a && other.b == b) || (other.a == b && other.b == a);
 }
 
+/**
+ * Calculates the intersections points between the ray and each line segment.
+ */
 void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
 {
     for (const LineSegment& ls : lineSegments)
@@ -548,14 +551,20 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
     intersectionPoints.erase(std::unique(intersectionPoints.begin(), intersectionPoints.end()), intersectionPoints.end());
 }
 
-std::vector<Ray> getIntersectionsOfRays(Point rayBase, int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
+/**
+ * Calculates the intersection points for each ray on each line segment.
+ * 
+ * Rays are cast at equally spaced angled intervals starting from angle 0 radian.
+ */
+std::vector<Ray> getIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
 {
+    std::vector<Ray> rays;
+
     if (rayCount == 0)
     {
-        throw std::runtime_error("Ray count can not be zero.");
+        return rays;
     }
 
-    std::vector<Ray> rays;
     float angleBetweenRays = 2 * PI / rayCount;
     for (int i = 0; i < rayCount; i++)
     {
@@ -570,13 +579,16 @@ std::vector<Ray> getIntersectionsOfRays(Point rayBase, int rayCount, const std::
     return rays;
 }
 
-void getClosestIntersectionsOfRays(Point rayBase, int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections)
-{
-    // Returns the triangle fan.
-    
+/**
+ * Calculates the CLOSEST intersection point for each ray. Essentially, the triangle fan.
+ * 
+ * Rays are cast at equally spaced angled intervals starting from angle 0 radian.
+ */
+void getClosestIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections)
+{   
     if (rayCount == 0)
     {
-        throw std::runtime_error("Ray count can not be zero.");
+        return;
     }
 
     float angleBetweenRays = 2 * PI / rayCount;
