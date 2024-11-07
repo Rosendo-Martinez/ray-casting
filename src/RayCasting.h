@@ -33,7 +33,7 @@ struct Point
 
 struct Line
 {
-    float angle; // radian
+    float angle; // in radians
     Point p; // some point on the line
 
     Line();
@@ -55,8 +55,8 @@ struct Line
 
 struct Ray
 {
-    float angle; // determines direction of ray, angle is normalized [0, 2PI] (idk)
-    Point base;
+    float angle; // angle at which ray goes off
+    Point base; // the base of the ray
 
     Ray();
     Ray(float angle, Point base);
