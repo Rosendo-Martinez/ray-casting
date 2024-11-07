@@ -20,7 +20,7 @@ Point::Point(const float x, const float y) : x(x), y(y) {}
 /**
  * Checks if two points are equal.
  * 
- * Warning: floating point errors could cause unexpected results.
+ * Warning: function does not take into account floating point errors!
  */
 bool Point::operator==(const Point other) const
 {
@@ -202,13 +202,14 @@ float Line::normalizedAngle() const
 /**
  * The intersection point of the two lines.
  * 
- * Warning: assumes that lines intersect at ONE and ONLY one point.
- * If this is not the case, then no errors are thrown, and returned value
- * is likely WRONG.
+ * Warning: throws error if lines have zero or many intersections
  */
 Point Line::intersection(const Line other) const
 {
-    // WARNING: assumes lines intersect at one and only one point
+    if (intersectionCount(other) != ONE)
+    {
+        throw std::runtime_error("Lines have zero or many intersection points but still called intersection().");
+    }
 
     Point inter;
     if (type() == VERTICAL && other.type() == ANGLED)
