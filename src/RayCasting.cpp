@@ -595,6 +595,12 @@ void getClosestIntersectionsOfRays(const Point rayBase, const int rayCount, cons
             pointIntersectionsForCurentRay.push_back(ls.b);
         }
 
+        // No intersection
+        if (pointIntersectionsForCurentRay.size() == 0)
+        {
+            continue;
+        }
+
         closestIntersections.push_back(r.closestPointOnRay(pointIntersectionsForCurentRay));
     }
 }
