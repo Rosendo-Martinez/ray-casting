@@ -45,7 +45,7 @@ private:
     {
         LineSegment ls;
 
-        if (l.type() == VERTICAL)
+        if (l.type() == LineTypes::Vertical)
         {
             ls.a = Point(l.p.x, windowPOS.y);
             ls.b = Point(l.p.x, windowPOS.y + window.getSize().y);

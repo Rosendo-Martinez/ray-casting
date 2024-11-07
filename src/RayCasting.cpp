@@ -52,12 +52,12 @@ Line::Line(const float angle, const Point p) : angle(angle), p(p) {}
  */
 float Line::xIntercept() const
 {
-    if (type() == HORIZONTAL)
+    if (type() == LineTypes::Horizontal)
     {
         throw std::runtime_error("Can't call xIntercept() on horizontal line.");
     }
 
-    if (type() == VERTICAL)
+    if (type() == LineTypes::Vertical)
     {
         return p.x;
     }
@@ -72,12 +72,12 @@ float Line::xIntercept() const
  */
 float Line::yIntercept() const
 {
-    if (type() == VERTICAL)
+    if (type() == LineTypes::Vertical)
     {
         throw std::runtime_error("Can't call yIntercept() on vertical line.");
     }
 
-    if (type() == HORIZONTAL)
+    if (type() == LineTypes::Horizontal)
     {
         return p.y;
     }
@@ -92,7 +92,7 @@ float Line::yIntercept() const
  */
 float Line::f(const float x) const
 {
-    if (type() == VERTICAL)
+    if (type() == LineTypes::Vertical)
     {
         throw std::runtime_error("Can't call f(x) on vertical line.");
     }
@@ -107,7 +107,7 @@ float Line::f(const float x) const
  */
 float Line::fInverse(const float y) const
 {
-    if (type() == HORIZONTAL)
+    if (type() == LineTypes::Horizontal)
     {
         throw std::runtime_error("Can't call fInverse(y) on horizontal line.");
     }
@@ -125,7 +125,7 @@ float Line::fInverse(const float y) const
  */
 float Line::slope() const
 {
-    if (type() == VERTICAL)
+    if (type() == LineTypes::Vertical)
     {
         throw std::runtime_error("Can't call slope() on vertical line.");
     }
@@ -141,22 +141,22 @@ float Line::slope() const
  *   Angled
  *   Vertical
  */
-int Line::type() const
+LineTypes Line::type() const
 {
     // Horizontal
     if (angle == 0.f || std::floor(angle / PI) == angle / PI)
     {
-        return HORIZONTAL;
+        return LineTypes::Horizontal;
     }
     // Vertical
     else if (std::floor(angle / (PI/2)) == angle / (PI/2))
     {
-        return VERTICAL;
+        return LineTypes::Vertical;
     }
     // Angled
     else
     {
-        return ANGLED;
+        return LineTypes::Angled;
     }
 }
 
@@ -169,7 +169,7 @@ int Line::type() const
  */
 bool Line::has(const Point a) const
 {
-    if (type() == VERTICAL)
+    if (type() == LineTypes::Vertical)
     {
         return a.x == p.x;
     }
@@ -212,32 +212,32 @@ Point Line::intersection(const Line other) const
     }
 
     Point inter;
-    if (type() == VERTICAL && other.type() == ANGLED)
+    if (type() == LineTypes::Vertical && other.type() == LineTypes::Angled)
     {
         inter.x = xIntercept();
         inter.y = other.f(inter.x);
     }
-    else if (type() == VERTICAL && other.type() == HORIZONTAL)
+    else if (type() == LineTypes::Vertical && other.type() == LineTypes::Horizontal)
     {
         inter.x = xIntercept();
         inter.y = other.yIntercept();
     }
-    else if (type() == HORIZONTAL && other.type() == ANGLED)
+    else if (type() == LineTypes::Horizontal && other.type() == LineTypes::Angled)
     {
         inter.y = yIntercept();
         inter.x = other.fInverse(inter.y);
     }
-    else if (type() == HORIZONTAL && other.type() == VERTICAL)
+    else if (type() == LineTypes::Horizontal && other.type() == LineTypes::Vertical)
     {
         inter.y = yIntercept();
         inter.x = other.xIntercept();
     }
-    else if (type() == ANGLED && other.type() == HORIZONTAL)
+    else if (type() == LineTypes::Angled && other.type() == LineTypes::Horizontal)
     {
         inter.y = other.yIntercept();
         inter.x = fInverse(inter.y);
     }
-    else if (type() == ANGLED && other.type() == VERTICAL)
+    else if (type() == LineTypes::Angled && other.type() == LineTypes::Vertical)
     {
         inter.x = other.xIntercept();
         inter.y = f(inter.x);
@@ -284,7 +284,7 @@ int Line::intersectionCount(const Line other) const
     {
         return ONE;
     }
-    else if (type() == HORIZONTAL)
+    else if (type() == LineTypes::Horizontal)
     {
         return yIntercept() == other.yIntercept() ? MANY : ZERO;
     }

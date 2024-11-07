@@ -2,10 +2,6 @@
 
 const float PI = 3.14159265359f;
 
-const int HORIZONTAL = -1;
-const int ANGLED = 0;
-const int VERTICAL = 1;
-
 const int ZERO = 0;
 const int ONE = 1;
 const int MANY = 2;
@@ -19,6 +15,10 @@ const int SOUTH_EAST = 5;
 const int NORTH_WEST = 6;
 const int SOUTH_WEST = 7;
 
+enum class LineTypes
+{
+    Horizontal, Angled, Vertical
+};
 
 struct Point
 {
@@ -44,7 +44,7 @@ struct Line
     float f(const float x) const;
     float fInverse(const float y) const;
     float slope() const;
-    int   type() const;
+    LineTypes type() const;
     bool  has(const Point a) const;
     float normalizedAngle() const;
     Point intersection(const Line other) const;
