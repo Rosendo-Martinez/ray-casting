@@ -18,6 +18,7 @@ private:
     std::vector<Ray> rays;
     std::vector<Point> intersectionPoints;
     std::vector<LineSegment> intersectionLineSegments;
+    std::vector<Point> fan;
     Point rayBase = Point(7,5);
 
     Point scale(const Point p) const
@@ -139,6 +140,7 @@ private:
 
 
         rays = getIntersectionsOfRays(rayBase, 12, map, intersectionPoints, intersectionLineSegments);
+        getClosestIntersectionsOfRays(rayBase, 100, map, fan);
     }
 
     void drawPoint(Point p, sf::Color color = sf::Color::White)
@@ -274,22 +276,28 @@ private:
             drawLineSegment(scale(ls));
         }
 
-        for (auto r : rays)
-        {
-            drawLineSegment(toDrawableLineSegment(scale(r)), sf::Color(255, 255, 0, 100));
-        }
+        // for (auto r : rays)
+        // {
+        //     drawLineSegment(toDrawableLineSegment(scale(r)), sf::Color(255, 255, 0, 100));
+        // }
 
         drawPoint(scale(rayBase), sf::Color(255,255,0,255));
 
-        for (auto p : intersectionPoints)
+        for (auto p : fan)
         {
             drawPoint(scale(p), sf::Color(255, 0, 0, 200));
+            drawLineSegment(scale(LineSegment(rayBase, p)), sf::Color(255, 255, 0, 100));
         }
 
-        for (auto ls : intersectionLineSegments)
-        {
-            drawLineSegment((scale(ls)));
-        }
+        // for (auto p : intersectionPoints)
+        // {
+        //     drawPoint(scale(p), sf::Color(255, 0, 0, 200));
+        // }
+
+        // for (auto ls : intersectionLineSegments)
+        // {
+        //     drawLineSegment((scale(ls)));
+        // }
 
         window.display();
     }
