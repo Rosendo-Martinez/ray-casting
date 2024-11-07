@@ -459,3 +459,30 @@ std::vector<Ray> getIntersectionsOfRays(Point rayBase, int rayCount, const std::
 
     return rays;
 }
+
+void getClosestIntersectionsOfRays(Point rayBase, int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections)
+{
+    // Returns the triangle fan.
+    
+    if (rayCount == 0)
+    {
+        throw std::runtime_error("Ray count can not be zero.");
+    }
+
+    float angleBetweenRays = 2 * PI / rayCount;
+    for (int i = 0; i <rayCount; i++)
+    {
+        Ray r = Ray(angleBetweenRays * i, rayBase);
+        std::vector<Point> pointIntersectionsForCurentRay;
+        std::vector<LineSegment> lineSegmentsIntersectionsForCurrentRay;
+        getIntersections(r, lineSegments, pointIntersectionsForCurentRay, lineSegmentsIntersectionsForCurrentRay);
+
+        for (auto ls : lineSegmentsIntersectionsForCurrentRay)
+        {
+            pointIntersectionsForCurentRay.push_back(ls.a);
+            pointIntersectionsForCurentRay.push_back(ls.b);
+        }
+
+        closestIntersections.push_back(r.closestPointOnRay(pointIntersectionsForCurentRay));
+    }
+}
