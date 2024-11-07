@@ -139,7 +139,7 @@ private:
         map.push_back(lj);
 
 
-        rays = getIntersectionsOfRays(rayBase, 12, map, intersectionPoints, intersectionLineSegments);
+        rays = getIntersectionsOfRays(rayBase, 10, map, intersectionPoints, intersectionLineSegments);
         getClosestIntersectionsOfRays(rayBase, 100, map, fan);
     }
 
@@ -283,11 +283,31 @@ private:
 
         drawPoint(scale(rayBase), sf::Color(255,255,0,255));
 
+        // Size is fan size plus 1 for ray base
+        sf::VertexArray triangleFan(sf::TriangleFan, fan.size() + 2);
+        triangleFan[0] = sf::Vector2f(scale(rayBase).x, scale(rayBase).y) - windowPOS;
+        triangleFan[0].color = sf::Color(255,255,0,100);
+
+        for (int i = 0; i < fan.size(); i++)
+        {
+            triangleFan[i + 1].position = sf::Vector2f(scale(fan[i]).x,scale(fan[i]).y) - windowPOS;
+
+            triangleFan[i + 1].color = sf::Color(255,255,0,50);
+        }
+
+        // double up on first point in fan vector to complete actual fan (i.e make it go fully around)
+        triangleFan[fan.size() + 1].position = sf::Vector2f(scale(fan[0]).x,scale(fan[0]).y) - windowPOS;
+        triangleFan[fan.size() + 1].color = sf::Color(255,255,0,50);
+
+        window.draw(triangleFan);
+
         for (auto p : fan)
         {
             drawPoint(scale(p), sf::Color(255, 0, 0, 200));
             drawLineSegment(scale(LineSegment(rayBase, p)), sf::Color(255, 255, 0, 100));
         }
+
+
 
         // for (auto p : intersectionPoints)
         // {
