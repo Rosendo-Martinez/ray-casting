@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include "RayCasting.h"
+#include <iostream>
 
 bool almostEqual(float a, float b, float epsilon = 1e-5f) {
     return std::fabs(a - b) < epsilon;
@@ -603,4 +604,114 @@ void getClosestIntersectionsOfRays(const Point rayBase, const int rayCount, cons
 
         closestIntersections.push_back(r.closestPointOnRay(pointIntersectionsForCurentRay));
     }
+}
+
+void getVertices(const std::vector<LineSegment>& lineSegments, std::vector<Point>& vertices)
+{
+    for (auto ls : lineSegments)
+    {
+        bool foundPointA = false;
+        for (auto v : vertices)
+        {
+            if (ls.a == v)
+            {
+                foundPointA = true;
+                break;
+            }
+        }
+        if (!foundPointA)
+        {
+            vertices.push_back(ls.a);
+        }
+
+        bool foundPointB = false;
+        for (auto v : vertices)
+        {
+            if (ls.b == v)
+            {
+                foundPointB = true;
+                break;
+            }
+        }
+        if (!foundPointB)
+        {
+            vertices.push_back(ls.b);
+        }
+    }
+}
+
+bool getClosestIntersection(const Ray r, const std::vector<LineSegment> & lineSegments, Point& result)
+{
+    // true if found point
+    // false else
+    std::vector<Point> pointIntersectionsForCurentRay;
+    std::vector<LineSegment> lineSegmentsIntersectionsForCurrentRay;
+    getIntersections(r, lineSegments, pointIntersectionsForCurentRay, lineSegmentsIntersectionsForCurrentRay);
+
+    for (auto ls : lineSegmentsIntersectionsForCurrentRay)
+    {
+        pointIntersectionsForCurentRay.push_back(ls.a);
+        pointIntersectionsForCurentRay.push_back(ls.b);
+    }
+
+    // No intersection
+    if (pointIntersectionsForCurentRay.size() == 0)
+    {
+        return false;
+    }
+
+    result = r.closestPointOnRay(pointIntersectionsForCurentRay);
+
+    return true;
+}
+
+/**
+ * Ray casting using Profferer Churchill's algo.
+ */
+void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections)
+{
+    std::vector<Point> vertices;
+    getVertices(lineSegments, vertices);
+
+
+    const float delta = 0.1f; // radians
+
+    for (auto v : vertices)
+    {
+        Ray direct = Ray(rayBase, v);
+        Ray counterClockwise = Ray(direct.angle + delta, rayBase);
+        Ray clockwise = Ray(direct.angle - delta, rayBase);
+
+        Point intersectionD;
+        Point intersectionCC;
+        Point intersectionC;
+
+        if (getClosestIntersection(direct, lineSegments, intersectionD))
+        {
+            // Very important code: due to floating point errors, ray cast directly at v may not actual go through v.
+            // This code fixes this problem!
+            if (rayBase.distSquared(v) < rayBase.distSquared(intersectionD))
+            {
+                closestIntersections.push_back(v);
+            }
+            else 
+            {
+                closestIntersections.push_back(intersectionD);
+            }
+        }
+
+        if (getClosestIntersection(counterClockwise, lineSegments, intersectionCC))
+        {
+            closestIntersections.push_back(intersectionCC);
+        }
+        if (getClosestIntersection(clockwise, lineSegments, intersectionC))
+        {
+            closestIntersections.push_back(intersectionC);
+        }
+    }
+
+    std::sort(closestIntersections.begin(), closestIntersections.end(), [&](Point &a, Point& b)
+    {
+        return Ray(rayBase, a).toLine().normalizedAngle() > Ray(rayBase, b).toLine().normalizedAngle();
+    });
 }

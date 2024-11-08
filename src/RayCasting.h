@@ -83,3 +83,5 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
 std::vector<Ray> getIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments);
 
 void getClosestIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections);
+
+void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections);
