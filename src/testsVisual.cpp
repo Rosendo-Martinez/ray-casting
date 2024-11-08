@@ -23,6 +23,11 @@ private:
     bool isHoldingRightClick = false;
     int rayCount = 25;
 
+    Point descale(const Point p) const
+    {
+        return Point(p.x / m_scale, p.y / m_scale);
+    }
+
     Point scale(const Point p) const
     {
         return Point(p.x * m_scale, p.y * m_scale);
@@ -188,8 +193,7 @@ private:
             intersectionLineSegments.clear();
             fan.clear();
 
-            // Descale mouse pos and window pos
-            rayBase = Point(sf::Mouse::getPosition(window).x/m_scale + windowPOS.x/m_scale, sf::Mouse::getPosition(window).y/m_scale + windowPOS.y/m_scale);
+            rayBase = descale(Point(sf::Mouse::getPosition(window).x + windowPOS.x, sf::Mouse::getPosition(window).y + windowPOS.y));
 
             rays = getIntersectionsOfRays(rayBase, rayCount, map, intersectionPoints, intersectionLineSegments);
             getClosestIntersectionsOfRays(rayBase, rayCount, map, fan);
