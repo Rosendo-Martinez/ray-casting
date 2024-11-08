@@ -308,6 +308,8 @@ Ray::Ray(const Point base, const Point pointOnRay)
 {
     if (base.x == pointOnRay.x && base.y == pointOnRay.y)
     {
+        std::cout << "Base(" << base.x << ", " << base.y << ")\n";
+        std::cout << "PointOnRay(" << pointOnRay.x << ", " << pointOnRay.y << ")\n";
         throw std::runtime_error("Ray's with no direction are not allowed!");
     }
 
@@ -674,7 +676,7 @@ void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSe
     getVertices(lineSegments, vertices);
 
 
-    const float delta = 0.1f; // radians
+    const float delta = 0.0001f; // radians
 
     for (auto v : vertices)
     {
@@ -686,7 +688,7 @@ void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSe
         Point intersectionCC;
         Point intersectionC;
 
-        if (getClosestIntersection(direct, lineSegments, intersectionD))
+        if (getClosestIntersection(direct, lineSegments, intersectionD) && !(intersectionD == rayBase))
         {
             // Very important code: due to floating point errors, ray cast directly at v may not actual go through v.
             // This code fixes this problem!
@@ -699,17 +701,17 @@ void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSe
                 closestIntersections.push_back(intersectionD);
             }
         }
-
-        if (getClosestIntersection(counterClockwise, lineSegments, intersectionCC))
+        if (getClosestIntersection(counterClockwise, lineSegments, intersectionCC) && !(intersectionCC == rayBase))
         {
             closestIntersections.push_back(intersectionCC);
         }
-        if (getClosestIntersection(clockwise, lineSegments, intersectionC))
+        if (getClosestIntersection(clockwise, lineSegments, intersectionC) && !(intersectionC == rayBase))
         {
             closestIntersections.push_back(intersectionC);
         }
     }
 
+    // sort points by angle
     std::sort(closestIntersections.begin(), closestIntersections.end(), [&](Point &a, Point& b)
     {
         return Ray(rayBase, a).toLine().normalizedAngle() > Ray(rayBase, b).toLine().normalizedAngle();
