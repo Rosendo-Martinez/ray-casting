@@ -315,17 +315,17 @@ private:
         for (int i = 0; i < fan.size(); i++)
         {
             triangleFan[i + 1].position = sf::Vector2f(scale(fan[i]).x,scale(fan[i]).y) - windowPOS;
-            triangleFan[i + 1].color = sf::Color(255,255,0,50);
+            triangleFan[i + 1].color = sf::Color(255,255,0,100);
         }
         // double up on first point in fan vector to complete actual fan (i.e make it go fully around)
         triangleFan[fan.size() + 1].position = sf::Vector2f(scale(fan[0]).x,scale(fan[0]).y) - windowPOS;
-        triangleFan[fan.size() + 1].color = sf::Color(255,255,0,50);
+        triangleFan[fan.size() + 1].color = sf::Color(255,255,0,100);
         window.draw(triangleFan);
-        for (auto p : fan)
-        {
-            drawPoint(scale(p), sf::Color(255, 0, 0, 200));
-            drawLineSegment(scale(LineSegment(rayBase, p)), sf::Color(255, 255, 0, 100));
-        }
+        // for (auto p : fan)
+        // {
+        //     drawPoint(scale(p), sf::Color(255, 0, 0, 50));
+        //     drawLineSegment(scale(LineSegment(rayBase, p)), sf::Color(255, 255, 0, 25));
+        // }
 
         // Draw all intersection points
         // for (auto p : intersectionPoints)
