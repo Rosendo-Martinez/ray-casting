@@ -608,10 +608,14 @@ void getClosestIntersectionsOfRays(const Point rayBase, const int rayCount, cons
     }
 }
 
+/**
+ * Gets unique vertices from line segments.
+ */
 void getVertices(const std::vector<LineSegment>& lineSegments, std::vector<Point>& vertices)
 {
     for (auto ls : lineSegments)
     {
+        // Check if endpoint a of line segment is already in list
         bool foundPointA = false;
         for (auto v : vertices)
         {
@@ -621,11 +625,14 @@ void getVertices(const std::vector<LineSegment>& lineSegments, std::vector<Point
                 break;
             }
         }
+
+        // If endpoint a is not in list yet, add it now
         if (!foundPointA)
         {
             vertices.push_back(ls.a);
         }
 
+        // Check if endpoint b of line segment is already in list
         bool foundPointB = false;
         for (auto v : vertices)
         {
@@ -635,6 +642,8 @@ void getVertices(const std::vector<LineSegment>& lineSegments, std::vector<Point
                 break;
             }
         }
+
+        // If endpoint b is not in list yet, add it now
         if (!foundPointB)
         {
             vertices.push_back(ls.b);
