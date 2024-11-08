@@ -680,6 +680,13 @@ void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSe
 
     for (auto v : vertices)
     {
+        // inside wall
+        if (v == rayBase)
+        {
+            closestIntersections.clear();
+            return;
+        }
+
         Ray direct = Ray(rayBase, v);
         Ray counterClockwise = Ray(direct.angle + delta, rayBase);
         Ray clockwise = Ray(direct.angle - delta, rayBase);
@@ -688,7 +695,7 @@ void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSe
         Point intersectionCC;
         Point intersectionC;
 
-        if (getClosestIntersection(direct, lineSegments, intersectionD) && !(intersectionD == rayBase))
+        if (getClosestIntersection(direct, lineSegments, intersectionD))
         {
             // Very important code: due to floating point errors, ray cast directly at v may not actual go through v.
             // This code fixes this problem!
@@ -701,13 +708,20 @@ void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSe
                 closestIntersections.push_back(intersectionD);
             }
         }
-        if (getClosestIntersection(counterClockwise, lineSegments, intersectionCC) && !(intersectionCC == rayBase))
+        if (getClosestIntersection(counterClockwise, lineSegments, intersectionCC))
         {
             closestIntersections.push_back(intersectionCC);
         }
-        if (getClosestIntersection(clockwise, lineSegments, intersectionC) && !(intersectionC == rayBase))
+        if (getClosestIntersection(clockwise, lineSegments, intersectionC))
         {
             closestIntersections.push_back(intersectionC);
+        }
+
+        // inside wall
+        if ((intersectionD == rayBase) || (intersectionCC == rayBase) || (intersectionC == rayBase))
+        {
+            closestIntersections.clear();
+            return;
         }
     }
 
