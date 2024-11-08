@@ -651,27 +651,36 @@ void getVertices(const std::vector<LineSegment>& lineSegments, std::vector<Point
     }
 }
 
+/**
+ * Calculates the closest intersection of ray and sets it to result.
+ * 
+ * Returns true if intersection found, else false if no intersection was found.
+ */
 bool getClosestIntersection(const Ray r, const std::vector<LineSegment> & lineSegments, Point& result)
 {
-    // true if found point
-    // false else
-    std::vector<Point> pointIntersectionsForCurentRay;
-    std::vector<LineSegment> lineSegmentsIntersectionsForCurrentRay;
-    getIntersections(r, lineSegments, pointIntersectionsForCurentRay, lineSegmentsIntersectionsForCurrentRay);
+    std::vector<Point> intersectionPoints;
+    std::vector<LineSegment> intersectionLineSegments;
 
-    for (auto ls : lineSegmentsIntersectionsForCurrentRay)
+    // get intersection points and intersection line segments
+    getIntersections(r, lineSegments, intersectionPoints, intersectionLineSegments);
+
+    for (auto ls : intersectionLineSegments)
     {
-        pointIntersectionsForCurentRay.push_back(ls.a);
-        pointIntersectionsForCurentRay.push_back(ls.b);
+        // Ray intersects with entire line segment
+        // Only the endpoints are needed since 
+        // we are looking for closest intersection point of ray 
+        intersectionPoints.push_back(ls.a);
+        intersectionPoints.push_back(ls.b);
     }
 
-    // No intersection
-    if (pointIntersectionsForCurentRay.size() == 0)
+    // Ray does not intersect with any line segment
+    if (intersectionPoints.size() == 0)
     {
         return false;
     }
 
-    result = r.closestPointOnRay(pointIntersectionsForCurentRay);
+    // get closest intersection point
+    result = r.closestPointOnRay(intersectionPoints);
 
     return true;
 }
