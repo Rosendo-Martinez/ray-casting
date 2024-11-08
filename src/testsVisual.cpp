@@ -21,6 +21,7 @@ private:
     std::vector<Point> fan;
     Point rayBase = Point(7,9);
     bool isHoldingRightClick = false;
+    int rayCount = 25;
 
     Point scale(const Point p) const
     {
@@ -140,8 +141,8 @@ private:
         map.push_back(lj);
 
 
-        rays = getIntersectionsOfRays(rayBase, 25, map, intersectionPoints, intersectionLineSegments);
-        getClosestIntersectionsOfRays(rayBase, 25, map, fan);
+        rays = getIntersectionsOfRays(rayBase, rayCount, map, intersectionPoints, intersectionLineSegments);
+        getClosestIntersectionsOfRays(rayBase, rayCount, map, fan);
         std::cout << "Inter Line Seg Size: " << intersectionLineSegments.size() << "\n";
     }
 
@@ -190,8 +191,8 @@ private:
             // Descale mouse pos and window pos
             rayBase = Point(sf::Mouse::getPosition(window).x/m_scale + windowPOS.x/m_scale, sf::Mouse::getPosition(window).y/m_scale + windowPOS.y/m_scale);
 
-            rays = getIntersectionsOfRays(rayBase, 25, map, intersectionPoints, intersectionLineSegments);
-            getClosestIntersectionsOfRays(rayBase, 25, map, fan);
+            rays = getIntersectionsOfRays(rayBase, rayCount, map, intersectionPoints, intersectionLineSegments);
+            getClosestIntersectionsOfRays(rayBase, rayCount, map, fan);
         }
 
         sf::Event event;
