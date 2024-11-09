@@ -78,10 +78,8 @@ struct LineSegment
 
 // Functions to use for ray-intersection detection:
 
-void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments);
-
-std::vector<Ray> getIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments);
+std::vector<Ray> getAllIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments);
 
 void getClosestIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections);
 
-void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections);
+void getClosestIntersectionOfRays(const Point rayBase, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections);

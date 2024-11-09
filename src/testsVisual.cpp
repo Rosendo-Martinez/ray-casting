@@ -147,7 +147,7 @@ private:
 
 
         // rays = getIntersectionsOfRays(rayBase, rayCount, map, intersectionPoints, intersectionLineSegments);
-        getClosestIntersectionOfRays2(rayBase, map, fan);
+        getClosestIntersectionOfRays(rayBase, map, fan);
         std::cout << "Inter Line Seg Size: " << intersectionLineSegments.size() << "\n";
     }
 
@@ -196,7 +196,7 @@ private:
             rayBase = descale(Point(sf::Mouse::getPosition(window).x + windowPOS.x, sf::Mouse::getPosition(window).y + windowPOS.y));
 
             // rays = getIntersectionsOfRays(rayBase, rayCount, map, intersectionPoints, intersectionLineSegments);
-            getClosestIntersectionOfRays2(rayBase, map, fan);
+            getClosestIntersectionOfRays(rayBase, map, fan);
         }
 
         sf::Event event;

@@ -27,7 +27,7 @@ void testGetIntersections(const Ray r, const std::vector<LineSegment>& lineSegme
     std::vector<Point> resultIntersectionPoints;
     std::vector<LineSegment> resultIntersectionLineSegments;
 
-    getIntersections(r, lineSegments, resultIntersectionPoints, resultIntersectionLineSegments);
+    getAllIntersectionsOfRay(r, lineSegments, resultIntersectionPoints, resultIntersectionLineSegments);
 
 
     if (resultIntersectionLineSegments.size() != actualIntersectionLineSegments.size())

@@ -492,7 +492,7 @@ bool LineSegment::operator==(const LineSegment& other) const
 /**
  * Calculates the intersections points between the ray and each line segment.
  */
-void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
+void getAllIntersectionsOfRay(const Ray r, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
 {
     for (const LineSegment& ls : lineSegments)
     {
@@ -549,7 +549,7 @@ void getIntersections(const Ray r, const std::vector<LineSegment>& lineSegments,
  * 
  * Rays are cast at equally spaced angled intervals starting from angle 0 radian.
  */
-std::vector<Ray> getIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
+std::vector<Ray> getAllIntersectionsOfRays(const Point rayBase, const int rayCount, const std::vector<LineSegment>& lineSegments, std::vector<Point>& intersectionPoints, std::vector<LineSegment>& intersectionLineSegments)
 {
     std::vector<Ray> rays;
 
@@ -566,7 +566,7 @@ std::vector<Ray> getIntersectionsOfRays(const Point rayBase, const int rayCount,
 
     for (auto r : rays)
     {
-        getIntersections(r, lineSegments, intersectionPoints, intersectionLineSegments);
+        getAllIntersectionsOfRay(r, lineSegments, intersectionPoints, intersectionLineSegments);
     }
 
     return rays;
@@ -590,7 +590,7 @@ void getClosestIntersectionsOfRays(const Point rayBase, const int rayCount, cons
         Ray r = Ray(angleBetweenRays * i, rayBase);
         std::vector<Point> pointIntersectionsForCurentRay;
         std::vector<LineSegment> lineSegmentsIntersectionsForCurrentRay;
-        getIntersections(r, lineSegments, pointIntersectionsForCurentRay, lineSegmentsIntersectionsForCurrentRay);
+        getAllIntersectionsOfRay(r, lineSegments, pointIntersectionsForCurentRay, lineSegmentsIntersectionsForCurrentRay);
 
         for (auto ls : lineSegmentsIntersectionsForCurrentRay)
         {
@@ -662,7 +662,7 @@ bool getClosestIntersection(const Ray r, const std::vector<LineSegment> & lineSe
     std::vector<LineSegment> intersectionLineSegments;
 
     // get intersection points and intersection line segments
-    getIntersections(r, lineSegments, intersectionPoints, intersectionLineSegments);
+    getAllIntersectionsOfRay(r, lineSegments, intersectionPoints, intersectionLineSegments);
 
     for (auto ls : intersectionLineSegments)
     {
@@ -686,14 +686,13 @@ bool getClosestIntersection(const Ray r, const std::vector<LineSegment> & lineSe
 }
 
 /**
- * Casts 3 rays at each vertex of line segments.
+ * Casts 3 rays at each vertex of each line segment.
+ * 
  * One directly at it, one slightly to its left, and one slightly to its right. 
  * Only the closest intersections of each ray are returned.
  * The points are sorted by angle.
- * 
- * What is returned is essentially a triangle fan.
  */
-void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections)
+void getClosestIntersectionOfRays(const Point rayBase, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections)
 {
     std::vector<Point> vertices;
 
