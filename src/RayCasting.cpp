@@ -686,64 +686,74 @@ bool getClosestIntersection(const Ray r, const std::vector<LineSegment> & lineSe
 }
 
 /**
- * Ray casting using Profferer Churchill's algo.
+ * Casts 3 rays at each vertex of line segments.
+ * One directly at it, one slightly to its left, and one slightly to its right. 
+ * Only the closest intersections of each ray are returned.
+ * The points are sorted by angle.
+ * 
+ * What is returned is essentially a triangle fan.
  */
 void getClosestIntersectionOfRays2(const Point rayBase, const std::vector<LineSegment>& lineSegments, std::vector<Point>& closestIntersections)
 {
     std::vector<Point> vertices;
-    getVertices(lineSegments, vertices);
 
+    getVertices(lineSegments, vertices);
 
     const float delta = 0.0001f; // radians
 
     for (auto v : vertices)
     {
-        // inside wall
+        // Inside line segment
         if (v == rayBase)
         {
             closestIntersections.clear();
             return;
         }
 
-        Ray direct = Ray(rayBase, v);
-        Ray counterClockwise = Ray(direct.angle + delta, rayBase);
-        Ray clockwise = Ray(direct.angle - delta, rayBase);
+        // Cast rays: one directly at v, one slightly to its left, another slightly to its right
+        const Ray direct = Ray(rayBase, v);
+        const Ray counterClockwise = Ray(direct.angle + delta, rayBase);
+        const Ray clockwise = Ray(direct.angle - delta, rayBase);
 
-        Point intersectionD;
-        Point intersectionCC;
-        Point intersectionC;
+        // closest intersection points of rays
+        Point intDirect;
+        Point intCounterClockwise;
+        Point intClockwise;
 
-        if (getClosestIntersection(direct, lineSegments, intersectionD))
+        // Direct ray at v
+        if (getClosestIntersection(direct, lineSegments, intDirect))
         {
             // Very important code: due to floating point errors, ray cast directly at v may not actual go through v.
             // This code fixes this problem!
-            if (rayBase.distSquared(v) < rayBase.distSquared(intersectionD))
+            if (rayBase.distSquared(v) < rayBase.distSquared(intDirect))
             {
                 closestIntersections.push_back(v);
             }
-            else 
+            else
             {
-                closestIntersections.push_back(intersectionD);
+                closestIntersections.push_back(intDirect);
             }
         }
-        if (getClosestIntersection(counterClockwise, lineSegments, intersectionCC))
+        // Ray cast slightly to v's left
+        if (getClosestIntersection(counterClockwise, lineSegments, intCounterClockwise))
         {
-            closestIntersections.push_back(intersectionCC);
+            closestIntersections.push_back(intCounterClockwise);
         }
-        if (getClosestIntersection(clockwise, lineSegments, intersectionC))
+        // Ray cast slightly to v's right
+        if (getClosestIntersection(clockwise, lineSegments, intClockwise))
         {
-            closestIntersections.push_back(intersectionC);
+            closestIntersections.push_back(intClockwise);
         }
 
-        // inside wall
-        if ((intersectionD == rayBase) || (intersectionCC == rayBase) || (intersectionC == rayBase))
+        // Inside line segment
+        if ((intDirect == rayBase) || (intCounterClockwise == rayBase) || (intClockwise == rayBase))
         {
             closestIntersections.clear();
             return;
         }
     }
 
-    // sort points by angle
+    // Sort points by angle to create triangle fan
     std::sort(closestIntersections.begin(), closestIntersections.end(), [&](Point &a, Point& b)
     {
         return Ray(rayBase, a).toLine().normalizedAngle() > Ray(rayBase, b).toLine().normalizedAngle();
