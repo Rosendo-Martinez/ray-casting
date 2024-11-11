@@ -23,5 +23,15 @@ testsVisual : ./bin/RayCasting.o ./bin/testsVisual.o
 ./bin/testsVisual.o : ./src/testsVisual.cpp
 	$(CXX) -g -c ./src/testsVisual.cpp -o ./bin/testsVisual.o
 
+testsMap : ./bin/Map.o ./bin/testsMap.o 
+	$(CXX) -g -o ./bin/testsMap.exe ./bin/Map.o ./bin/testsMap.o 
+	./bin/testsMap.exe
+
+./bin/Map.o : ./src/Map.h ./src/Map.cpp
+	$(CXX) -g -c ./src/Map.cpp -o ./bin/Map.o 
+
+./bin/testsMap.o : ./src/testsMap.cpp
+	$(CXX) -g -c ./src/testsMap.cpp -o ./bin/testsMap.o 
+
 clean :
 	rm -f ./bin/*
