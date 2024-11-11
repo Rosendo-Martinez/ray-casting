@@ -83,6 +83,35 @@ int main(int argc, char* argv[])
             std::cout << "Test 6: Passed\n";
         }
     }
+    {
+        Map m;
+        m.addLineSegment(LineSegment(Point(0,0), Point(10,10)));
+
+        if (m.sizePoints() != 2)
+        {
+            std::cout<< "Test 7: FAILED - failed to add endpoints of line segment\n";
+        }
+        else
+        {
+            std::cout<< "Test 7: Passed\n";
+        }
+    }
+    {
+        Map m;
+        Point p = Point(0,0);
+
+        m.addPoint(Point(p));
+        m.addLineSegment(LineSegment(p, Point(10,10)));
+
+        if (m.sizePoints() != 2)
+        {
+            std::cout<< "Test 8: FAILED - added endpoints of line segment that already existed\n";
+        }
+        else
+        {
+            std::cout<< "Test 8: Passed\n";
+        }
+    }
     
     return 0;
 }

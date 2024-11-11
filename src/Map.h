@@ -13,4 +13,6 @@ public:
 
     bool addPoint(Point p);
     bool addLineSegment(LineSegment ls);
+    int sizePoints();
+    int sizeLineSegments();
 };

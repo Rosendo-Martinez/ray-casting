@@ -42,3 +42,13 @@ bool Map::addLineSegment(LineSegment ls)
 
     return true;
 }
+
+int Map::sizePoints()
+{
+    return points.size();
+}
+
+int Map::sizeLineSegments()
+{
+    return lineSegments.size();
+}
