@@ -52,3 +52,56 @@ int Map::sizeLineSegments()
 {
     return lineSegments.size();
 }
+
+/**
+ * Removes the pont p.
+ * 
+ * Return true if point removed, else false if point not found.
+ */
+bool Map::removePoint(Point p)
+{
+    for (auto it = points.begin(); it != points.end(); it++)
+    {
+        if (*it == p)
+        {
+            points.erase(it);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Removes line segment.
+ * 
+ * Does not remove endpoints.
+ * 
+ * Returns true if line segment removed, else false if not found.
+ */
+bool Map::removeLineSegment(LineSegment ls)
+{
+    for (auto it = lineSegments.begin(); it != lineSegments.end(); it++)
+    {
+        if (*it == ls)
+        {
+            lineSegments.erase(it);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Moves a point.
+ * 
+ * If point is endpoint of line segment,
+ * then the endpoint will also move.
+ * 
+ * Returns true if point moved, else false if point not found.
+ */
+bool Map::movePoint(Point p)
+{
+    
+}

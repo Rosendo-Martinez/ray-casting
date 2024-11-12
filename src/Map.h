@@ -15,4 +15,7 @@ public:
     bool addLineSegment(LineSegment ls);
     int sizePoints();
     int sizeLineSegments();
+    bool removePoint(Point p);
+    bool removeLineSegment(LineSegment ls);
+    bool movePoint(Point p);
 };
