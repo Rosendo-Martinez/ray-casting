@@ -3,6 +3,82 @@
 #include <vector>
 #include "RayCasting.h"
 
+class Controller
+{
+private:
+    std::vector<LineSegment> map;
+    std::vector<Point> fan;
+    Point base = Point(7,5);
+    int rayCount = 25;
+
+public:
+    Controller() 
+    {
+        // Load default map
+
+        //outside walls
+        LineSegment ab = LineSegment(Point(0,0), Point(0,10));
+        LineSegment bc = LineSegment(Point(0,10), Point(15,10));
+        LineSegment cd = LineSegment(Point(15,10), Point(15,0));
+        LineSegment da = LineSegment(Point(15,0), Point(0,0));
+
+        // inner rectangle
+        LineSegment eg = LineSegment(Point(2,1), Point(2,9));
+        LineSegment gh = LineSegment(Point(2,9), Point(4,9));
+        LineSegment hf = LineSegment(Point(4,9), Point(4,1));
+        LineSegment fe = LineSegment(Point(4,1), Point(2,1));
+
+        // inner triangle
+        LineSegment jk = LineSegment(Point(9,5), Point(14,8));
+        LineSegment kl = LineSegment(Point(14,8), Point(14,2));
+        LineSegment lj = LineSegment(Point(14,2), Point(9,5));
+
+        map.push_back(ab);
+        map.push_back(bc);
+        map.push_back(cd);
+        map.push_back(da);
+        map.push_back(eg);
+        map.push_back(gh);
+        map.push_back(hf);
+        map.push_back(fe);
+        map.push_back(jk);
+        map.push_back(kl);
+        map.push_back(lj);
+
+        getClosestIntersectionOfRays(base, map, fan);
+    };
+
+    void moveBase(Point newBase)
+    {
+        base = newBase;
+
+        fan.clear();
+        getClosestIntersectionOfRays(base, map, fan);
+    }
+
+    void changeRayCount(int newRayCount)
+    {
+        newRayCount = rayCount;
+
+        fan.clear();
+        getClosestIntersectionOfRays(base, map, fan);
+    }
+
+    const std::vector<LineSegment> & getMap()
+    {
+        return map;
+    }
+
+    const std::vector<Point> & getFan()
+    {
+        return fan;
+    }
+
+    Point getBase()
+    {
+        return base;
+    }
+};
 
 class Render 
 {
@@ -14,14 +90,8 @@ private:
     sf::Vector2f     mouseClick;
     sf::Vector2f     mouseHold;
     float            m_scale = 50;
-    std::vector<LineSegment> map;
-    std::vector<Ray> rays;
-    std::vector<Point> intersectionPoints;
-    std::vector<LineSegment> intersectionLineSegments;
-    std::vector<Point> fan;
-    Point rayBase = Point(7,9);
     bool isHoldingRightClick = false;
-    int rayCount = 25;
+    Controller ctrl;
 
     Point descale(const Point p) const
     {
@@ -112,45 +182,6 @@ private:
         return ls;
     }
 
-    void loadMap()
-    {
-        // eventual I'd like to load from a file, for now just hard code it.
-        
-        // outside walls
-        LineSegment ab = LineSegment(Point(0,0), Point(0,10));
-        LineSegment bc = LineSegment(Point(0,10), Point(15,10));
-        LineSegment cd = LineSegment(Point(15,10), Point(15,0));
-        LineSegment da = LineSegment(Point(15,0), Point(0,0));
-
-        // inner rect
-        LineSegment eg = LineSegment(Point(2,1), Point(2,9));
-        LineSegment gh = LineSegment(Point(2,9), Point(4,9));
-        LineSegment hf = LineSegment(Point(4,9), Point(4,1));
-        LineSegment fe = LineSegment(Point(4,1), Point(2,1));
-
-        // inner triangle
-        LineSegment jk = LineSegment(Point(9,5), Point(14,8));
-        LineSegment kl = LineSegment(Point(14,8), Point(14,2));
-        LineSegment lj = LineSegment(Point(14,2), Point(9,5));
-
-        map.push_back(ab);
-        map.push_back(bc);
-        map.push_back(cd);
-        map.push_back(da);
-        map.push_back(eg);
-        map.push_back(gh);
-        map.push_back(hf);
-        map.push_back(fe);
-        map.push_back(jk);
-        map.push_back(kl);
-        map.push_back(lj);
-
-
-        // rays = getIntersectionsOfRays(rayBase, rayCount, map, intersectionPoints, intersectionLineSegments);
-        getClosestIntersectionOfRays(rayBase, map, fan);
-        std::cout << "Inter Line Seg Size: " << intersectionLineSegments.size() << "\n";
-    }
-
     void drawPoint(Point p, sf::Color color = sf::Color::White)
     {
         const int radius = 3;
@@ -188,15 +219,7 @@ private:
 
         if (isHoldingRightClick)
         {
-            rays.clear();
-            intersectionPoints.clear();
-            intersectionLineSegments.clear();
-            fan.clear();
-
-            rayBase = descale(Point(sf::Mouse::getPosition(window).x + windowPOS.x, sf::Mouse::getPosition(window).y + windowPOS.y));
-
-            // rays = getIntersectionsOfRays(rayBase, rayCount, map, intersectionPoints, intersectionLineSegments);
-            getClosestIntersectionOfRays(rayBase, map, fan);
+            ctrl.moveBase(descale(Point(sf::Mouse::getPosition(window).x + windowPOS.x, sf::Mouse::getPosition(window).y + windowPOS.y)));
         }
 
         sf::Event event;
@@ -294,50 +317,27 @@ private:
         drawLineSegment(toDrawableLineSegment(scale(Line(PI/2, Point(0,0)))), sf::Color(128,128,128, 255));
 
         // Draw map
-        for (auto ls : map)
+        for (auto ls : ctrl.getMap())
         {
             drawLineSegment(scale(ls));
         }
 
-        // Draw rays
-        // for (auto r : rays)
-        // {
-        //     drawLineSegment(toDrawableLineSegment(scale(r)), sf::Color(255, 255, 0, 50));
-        // }
-
         // Draw light source
-        drawPoint(scale(rayBase), sf::Color(255,255,0,255));
+        drawPoint(scale(ctrl.getBase()), sf::Color(255,255,0,255));
 
         // Draw fan and closest intersection points
-        sf::VertexArray triangleFan(sf::TriangleFan, fan.size() + 2); // +2 for light source point, and for repeating first point on fan
-        triangleFan[0] = sf::Vector2f(scale(rayBase).x, scale(rayBase).y) - windowPOS;
+        sf::VertexArray triangleFan(sf::TriangleFan, ctrl.getFan().size() + 2); // +2 for light source point, and for repeating first point on fan
+        triangleFan[0] = sf::Vector2f(scale(ctrl.getBase()).x, scale(ctrl.getBase()).y) - windowPOS;
         triangleFan[0].color = sf::Color(255,255,0,100);
-        for (int i = 0; i < fan.size(); i++)
+        for (int i = 0; i < ctrl.getFan().size(); i++)
         {
-            triangleFan[i + 1].position = sf::Vector2f(scale(fan[i]).x,scale(fan[i]).y) - windowPOS;
+            triangleFan[i + 1].position = sf::Vector2f(scale(ctrl.getFan()[i]).x,scale(ctrl.getFan()[i]).y) - windowPOS;
             triangleFan[i + 1].color = sf::Color(255,255,0,100);
         }
         // double up on first point in fan vector to complete actual fan (i.e make it go fully around)
-        triangleFan[fan.size() + 1].position = sf::Vector2f(scale(fan[0]).x,scale(fan[0]).y) - windowPOS;
-        triangleFan[fan.size() + 1].color = sf::Color(255,255,0,100);
+        triangleFan[ctrl.getFan().size() + 1].position = sf::Vector2f(scale(ctrl.getFan()[0]).x,scale(ctrl.getFan()[0]).y) - windowPOS;
+        triangleFan[ctrl.getFan().size() + 1].color = sf::Color(255,255,0,100);
         window.draw(triangleFan);
-        // for (auto p : fan)
-        // {
-        //     drawPoint(scale(p), sf::Color(255, 0, 0, 50));
-        //     drawLineSegment(scale(LineSegment(rayBase, p)), sf::Color(255, 255, 0, 25));
-        // }
-
-        // Draw all intersection points
-        // for (auto p : intersectionPoints)
-        // {
-        //     drawPoint(scale(p), sf::Color(255, 0, 0, 200));
-        // }
-
-        // Draw all intersection line segments
-        // for (auto ls : intersectionLineSegments)
-        // {
-        //     drawLineSegment(scale(ls), sf::Color(255,0,0,200));
-        // }
 
         window.display();
     }
@@ -352,8 +352,6 @@ public:
         windowPOS = sf::Vector2f(0.f,0.f);
         isDragging = false;
         windowPOSBeforeDrag = windowPOS;
-
-        loadMap();
     };
 
     void run() 
