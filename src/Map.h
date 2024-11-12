@@ -4,18 +4,16 @@
 class Map
 {
 private:
-    std::vector<Point> points;
     std::vector<LineSegment> lineSegments;
 
 public:
 
     Map();
 
-    bool addPoint(Point p);
+    int  sizeLineSegments();
     bool addLineSegment(LineSegment ls);
-    int sizePoints();
-    int sizeLineSegments();
-    bool removePoint(Point p);
     bool removeLineSegment(LineSegment ls);
-    bool movePoint(Point p);
+    bool moveEndPoint(Point oldPos, Point newPos);
+    bool closestEndPoint(Point& result);
+    const std::vector<LineSegment>& getLineSegments();
 };
