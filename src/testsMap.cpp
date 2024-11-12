@@ -1,117 +1,97 @@
 #include "Map.h"
 #include <iostream>
+#include <string>
 
+void printTest(const std::string& testDescription, bool result)
+{
+    if (result)
+    {
+        std::cout << "  PASSED: ";
+    }
+    else
+    {
+        std::cout << "  FAILED: ";
+    }
+
+    std::cout << testDescription << "\n";
+}
 
 int main(int argc, char* argv[]) 
 {
     {
         Map m;
         
-        if (m.addPoint(Point(0,0)) != true)
-        {
-            std::cout<< "Test 1: FAILED - failed to add point to empty map\n";
-        }
-        else
-        {
-            std::cout<< "Test 1: Passed\n";
-        }
-    }
-    {
-        Map m;
-
-        m.addPoint(Point(5,10));
-        if (m.addPoint(Point(20,20)) != true)
-        {
-            std::cout << "Test 2: FAILED - failed to add point to non-empty map\n";
-        }
-        else
-        {
-            std::cout<< "Test 2: Passed\n";
-        }
-    }
-    {
-        Map m;
-
-        Point p = Point(5,50);
-        m.addPoint(p);
-        if (m.addPoint(p) != false)
-        {
-            std::cout << "Test 3: FAILED - added existing point\n";
-        }
-        else
-        {
-            std::cout << "Test 3: Passed\n";
-        }
-    }
-
-    {
-        Map m;
-        
-        if (m.addLineSegment(LineSegment(Point(0,0), Point(10,10))) != true)
-        {
-            std::cout<< "Test 4: FAILED - failed to line segment to empty map\n";
-        }
-        else
-        {
-            std::cout<< "Test 4: Passed\n";
-        }
+        std::cout << "TEST: addLineSegment()\n";
+        printTest("check that can add line segment to empty map", m.addLineSegment(LineSegment(Point(0,0), Point(10,10))) == true);
+        printTest("check that can add line segment to not empty map", m.addLineSegment(LineSegment(Point(20,20), Point(30,30))) == true);
+        printTest("check that can't add duplicate", m.addLineSegment(LineSegment(Point(0,0), Point(10,10))) == false);
     }
     {
         Map m;
 
         m.addLineSegment(LineSegment(Point(0,0), Point(10,10)));
-        if (m.addLineSegment(LineSegment(Point(20,20), Point(40,40))) != true)
+        m.addLineSegment(LineSegment(Point(20,20), Point(30,30)));
+
+        std::cout << "TEST: removeLineSegment()\n";
+        printTest("check that can remove line segment", (m.removeLineSegment(LineSegment(Point(0,0), Point(10,10))) == true && m.sizeLineSegments() == 1));
+        printTest("check that can remove non-exist line segment", (m.removeLineSegment(LineSegment(Point(0,0), Point(10,10))) == false && m.sizeLineSegments() == 1));
+    }
+    {
+        std::cout << "TEST: moveEndPoint()\n";
         {
-            std::cout << "Test 5: FAILED - failed to add line segment to non-empty map\n";
+            Map m;
+
+            Point a = Point(0,0);
+            Point oldB = Point(10,10);
+            Point newB = Point(20,20);
+
+            m.addLineSegment(LineSegment(a, oldB));
+
+            printTest("move 1 endpoint of line segment (ls) [only 1 ls in map, and check other endpoint of ls doesn't change]", (m.moveEndPoint(oldB, newB) && m.getLineSegments()[0].a == a && m.getLineSegments()[0].b == newB));
         }
-        else
         {
-            std::cout<< "Test 5: Passed\n";
+            Map m;
+
+            Point p = Point(10,10);
+
+            LineSegment ls1 = LineSegment(Point(0,0), p);
+            LineSegment ls2 = LineSegment(p, Point(20,20));
+
+
+            m.addLineSegment(ls1);
+            m.addLineSegment(ls2);
+
+            Point newEndpoint = Point(20,10);
+
+            bool result = (m.moveEndPoint(p, newEndpoint) && m.getLineSegments()[0].b == newEndpoint && m.getLineSegments()[1].a == newEndpoint);
+
+            printTest("move endpoint that is endpoint of two line segments [check that it moves for both]", result);
         }
+    }
+    std::cout << "TEST: closestEndpoint()\n";
+    {
+        Map m;
+        Point p = Point(10,0);
+        Point center = Point(0,0);
+        float maxDist = 20;
+
+        m.addLineSegment(LineSegment(p, Point(100,100)));
+
+        Point pResult;
+        m.closestEndPoint(center, maxDist, pResult);
+
+        printTest("point within max distance", m.closestEndPoint(center, maxDist, pResult) && pResult == p);
     }
     {
         Map m;
+        m.addLineSegment(LineSegment(Point(100,100), Point(200,200)));
 
-        LineSegment ls = LineSegment(Point(0,0), Point(10,10));
-        m.addLineSegment(ls);
-        if (m.addLineSegment(ls) != false)
-        {
-            std::cout << "Test 6: FAILED - added existing line segment\n";
-        }
-        else
-        {
-            std::cout << "Test 6: Passed\n";
-        }
+        float maxDist = 20;
+        Point center = Point(0,0);
+        Point pResult;
+
+        printTest("no endpoint within max distance", m.closestEndPoint(center, maxDist, pResult) == false);
     }
-    {
-        Map m;
-        m.addLineSegment(LineSegment(Point(0,0), Point(10,10)));
 
-        if (m.sizePoints() != 2)
-        {
-            std::cout<< "Test 7: FAILED - failed to add endpoints of line segment\n";
-        }
-        else
-        {
-            std::cout<< "Test 7: Passed\n";
-        }
-    }
-    {
-        Map m;
-        Point p = Point(0,0);
-
-        m.addPoint(Point(p));
-        m.addLineSegment(LineSegment(p, Point(10,10)));
-
-        if (m.sizePoints() != 2)
-        {
-            std::cout<< "Test 8: FAILED - added endpoints of line segment that already existed\n";
-        }
-        else
-        {
-            std::cout<< "Test 8: Passed\n";
-        }
-    }
-    
     return 0;
 }

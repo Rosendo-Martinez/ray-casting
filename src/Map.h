@@ -14,6 +14,6 @@ public:
     bool addLineSegment(LineSegment ls);
     bool removeLineSegment(LineSegment ls);
     bool moveEndPoint(Point oldPos, Point newPos);
-    bool closestEndPoint(Point& result);
+    bool closestEndPoint(Point p, float maxDist, Point & result);
     const std::vector<LineSegment>& getLineSegments();
 };
