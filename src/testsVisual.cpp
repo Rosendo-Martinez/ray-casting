@@ -316,9 +316,13 @@ private:
                     {
                         m_scale += 1.f;
                     }
-                    else 
+                    else if (m_scale > .10f)
                     {
                         m_scale += .10f;
+                    }
+                    else
+                    {
+                        m_scale += 0.01f;
                     }
                 }
                 if (event.key.code == sf::Keyboard::Down)
@@ -332,14 +336,18 @@ private:
                     {
                         m_scale -= 1.f;
                     }
-                    else
+                    else if (m_scale > .10f)
                     {
                         m_scale -= .10f;
                     }
-
-                    if (m_scale < 0.1f)
+                    else 
                     {
-                        m_scale = 0.1f;
+                        m_scale -= 0.01f;
+                    }
+
+                    if (m_scale < 0.01f)
+                    {
+                        m_scale = 0.01f;
                     }
                 }
                 if (event.key.code == sf::Keyboard::Space)
