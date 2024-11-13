@@ -2,50 +2,99 @@
 #include <iostream>
 #include <vector>
 #include "RayCasting.h"
+#include "Map.h"
+#include <cmath>
 
 class Controller
 {
 private:
-    std::vector<LineSegment> map;
+    // std::vector<LineSegment> map;
     std::vector<Point> fan;
     Point base = Point(7,5);
     int rayCount = 25;
+    Map map;
 
 public:
+
     Controller() 
     {
         // Load default map
 
         //outside walls
-        LineSegment ab = LineSegment(Point(0,0), Point(0,10));
-        LineSegment bc = LineSegment(Point(0,10), Point(15,10));
-        LineSegment cd = LineSegment(Point(15,10), Point(15,0));
-        LineSegment da = LineSegment(Point(15,0), Point(0,0));
+        LineSegment ab = translate(LineSegment(Point(0,0), Point(0,10))  , -7.5, -5);
+        LineSegment bc = translate(LineSegment(Point(0,10), Point(15,10)), -7.5, -5);
+        LineSegment cd = translate(LineSegment(Point(15,10), Point(15,0)), -7.5, -5);
+        LineSegment da = translate(LineSegment(Point(15,0), Point(0,0))  , -7.5, -5);
 
         // inner rectangle
-        LineSegment eg = LineSegment(Point(2,1), Point(2,9));
-        LineSegment gh = LineSegment(Point(2,9), Point(4,9));
-        LineSegment hf = LineSegment(Point(4,9), Point(4,1));
-        LineSegment fe = LineSegment(Point(4,1), Point(2,1));
+        LineSegment eg = translate(LineSegment(Point(2,1), Point(2,9)), -7.5, -5);
+        LineSegment gh = translate(LineSegment(Point(2,9), Point(4,9)), -7.5, -5);
+        LineSegment hf = translate(LineSegment(Point(4,9), Point(4,1)), -7.5, -5);
+        LineSegment fe = translate(LineSegment(Point(4,1), Point(2,1)), -7.5, -5);
 
         // inner triangle
-        LineSegment jk = LineSegment(Point(9,5), Point(14,8));
-        LineSegment kl = LineSegment(Point(14,8), Point(14,2));
-        LineSegment lj = LineSegment(Point(14,2), Point(9,5));
+        LineSegment jk = translate(LineSegment(Point(9,5), Point(14,8)) , -7.5, -5);
+        LineSegment kl = translate(LineSegment(Point(14,8), Point(14,2)), -7.5, -5);
+        LineSegment lj = translate(LineSegment(Point(14,2), Point(9,5)) , -7.5, -5);
 
-        map.push_back(ab);
-        map.push_back(bc);
-        map.push_back(cd);
-        map.push_back(da);
-        map.push_back(eg);
-        map.push_back(gh);
-        map.push_back(hf);
-        map.push_back(fe);
-        map.push_back(jk);
-        map.push_back(kl);
-        map.push_back(lj);
 
-        getClosestIntersectionOfRays(base, map, fan);
+        // outside outside walls
+        // map.addLineSegment(LineSegment(Point(-10000,10000), Point(10000,10000)));
+        // map.addLineSegment(LineSegment(Point(-10000,10000), Point(-10000,-10000)));
+        // map.addLineSegment(LineSegment(Point(-10000,-10000), Point(10000,-10000)));
+        // map.addLineSegment(LineSegment(Point(10000,10000), Point(10000,-10000)));
+
+        map.addLineSegment(ab);
+        map.addLineSegment(bc);
+        map.addLineSegment(cd);
+        map.addLineSegment(da);
+        map.addLineSegment(eg);
+        map.addLineSegment(gh);
+        map.addLineSegment(hf);
+        map.addLineSegment(fe);
+        map.addLineSegment(jk);
+        map.addLineSegment(kl);
+        map.addLineSegment(lj);
+
+        map.addLineSegment(scale(ab,20));
+        map.addLineSegment(scale(bc,20));
+        map.addLineSegment(scale(cd,20));
+        map.addLineSegment(scale(da,20));
+        map.addLineSegment(scale(eg,20));
+        map.addLineSegment(scale(gh,20));
+        map.addLineSegment(scale(hf,20));
+        map.addLineSegment(scale(fe,20));
+        map.addLineSegment(scale(jk,20));
+        map.addLineSegment(scale(kl,20));
+        map.addLineSegment(scale(lj,20));
+
+        map.addLineSegment(scale(ab,250));
+        map.addLineSegment(scale(bc,250));
+        map.addLineSegment(scale(cd,250));
+        map.addLineSegment(scale(da,250));
+        map.addLineSegment(scale(eg,250));
+        map.addLineSegment(scale(gh,250));
+        map.addLineSegment(scale(hf,250));
+        map.addLineSegment(scale(fe,250));
+        map.addLineSegment(scale(jk,250));
+        map.addLineSegment(scale(kl,250));
+        map.addLineSegment(scale(lj,250));
+
+
+        map.addLineSegment(scale(ab,1400));
+        map.addLineSegment(scale(bc,1400));
+        map.addLineSegment(scale(cd,1400));
+        map.addLineSegment(scale(da,1400));
+        map.addLineSegment(scale(eg,1400));
+        map.addLineSegment(scale(gh,1400));
+        map.addLineSegment(scale(hf,1400));
+        map.addLineSegment(scale(fe,1400));
+        map.addLineSegment(scale(jk,1400));
+        map.addLineSegment(scale(kl,1400));
+        map.addLineSegment(scale(lj,1400));
+
+
+        getClosestIntersectionOfRays(base, getMap(), fan);
     };
 
     void moveBase(Point newBase)
@@ -53,7 +102,7 @@ public:
         base = newBase;
 
         fan.clear();
-        getClosestIntersectionOfRays(base, map, fan);
+        getClosestIntersectionOfRays(base, getMap(), fan);
     }
 
     void changeRayCount(int newRayCount)
@@ -61,12 +110,12 @@ public:
         newRayCount = rayCount;
 
         fan.clear();
-        getClosestIntersectionOfRays(base, map, fan);
+        getClosestIntersectionOfRays(base, getMap(), fan);
     }
 
     const std::vector<LineSegment> & getMap()
     {
-        return map;
+        return map.getLineSegments();
     }
 
     const std::vector<Point> & getFan()
@@ -74,10 +123,33 @@ public:
         return fan;
     }
 
+    void addLineSegment(LineSegment ls)
+    {
+        map.addLineSegment(ls);
+    }
+
     Point getBase()
     {
         return base;
     }
+
+    void update()
+    {
+        fan.clear();
+        getClosestIntersectionOfRays(base, getMap(), fan);
+    }
+
+    LineSegment translate(LineSegment ls, float dx, float dy)
+    {
+        return LineSegment(Point(ls.a.x + dx, ls.a.y + dy), Point(ls.b.x + dx, ls.b.y + dy));
+    }
+
+    LineSegment scale(LineSegment ls, int scale)
+    {
+        return LineSegment(Point(ls.a.x * scale, ls.a.y * scale), Point(ls.b.x * scale, ls.b.y * scale));
+    }
+
+
 };
 
 class Render 
@@ -92,6 +164,8 @@ private:
     float            m_scale = 50;
     bool isHoldingRightClick = false;
     Controller ctrl;
+    LineSegment toAdd;
+    int endPointsClickedByUser = 0;
 
     Point descale(const Point p) const
     {
@@ -268,6 +342,30 @@ private:
                         m_scale = 0.1f;
                     }
                 }
+                if (event.key.code == sf::Keyboard::Space)
+                {
+                    if (endPointsClickedByUser == 1)
+                    {
+                        toAdd.a = descale(Point(sf::Mouse::getPosition(window).x + windowPOS.x, sf::Mouse::getPosition(window).y + windowPOS.y));
+
+                        toAdd.a.x = std::round(toAdd.a.x);
+                        toAdd.a.y = std::round(toAdd.a.y);
+
+                        ctrl.addLineSegment(toAdd);
+                        ctrl.update();
+
+                        endPointsClickedByUser = 0;
+                    }
+                    else 
+                    {
+                        toAdd.b = descale(Point(sf::Mouse::getPosition(window).x + windowPOS.x, sf::Mouse::getPosition(window).y + windowPOS.y));
+
+                        toAdd.b.x = std::round(toAdd.b.x);
+                        toAdd.b.y = std::round(toAdd.b.y);
+
+                        endPointsClickedByUser++;
+                    }
+                }
             }
 
             if (event.type == sf::Event::MouseButtonPressed)
@@ -338,6 +436,14 @@ private:
         triangleFan[ctrl.getFan().size() + 1].position = sf::Vector2f(scale(ctrl.getFan()[0]).x,scale(ctrl.getFan()[0]).y) - windowPOS;
         triangleFan[ctrl.getFan().size() + 1].color = sf::Color(255,255,0,100);
         window.draw(triangleFan);
+
+        if (endPointsClickedByUser == 1)
+        {
+            Point a = descale(Point(sf::Mouse::getPosition(window).x + windowPOS.x, sf::Mouse::getPosition(window).y + windowPOS.y));
+            a.x = std::round(a.x);
+            a.y = std::round(a.y);
+            drawLineSegment(scale(LineSegment(toAdd.b, a)));
+        }
 
         window.display();
     }

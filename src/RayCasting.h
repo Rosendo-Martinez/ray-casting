@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 
 const float PI = 3.14159265359f;

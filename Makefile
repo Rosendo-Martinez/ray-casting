@@ -16,8 +16,8 @@ testsAuto : ./bin/RayCasting.o ./bin/testsAuto.o
 ./bin/RayCasting.o : ./src/RayCasting.cpp ./src/RayCasting.h
 	$(CXX) -g -c ./src/RayCasting.cpp -o ./bin/RayCasting.o
 
-testsVisual : ./bin/RayCasting.o ./bin/testsVisual.o
-	$(CXX) -g -o ./bin/testsVisual.exe ./bin/RayCasting.o ./bin/testsVisual.o $(LDFLAGS)
+testsVisual : ./bin/RayCasting.o ./bin/testsVisual.o ./bin/Map.o
+	$(CXX) -g -o ./bin/testsVisual.exe ./bin/RayCasting.o ./bin/testsVisual.o ./bin/Map.o $(LDFLAGS)
 	./bin/testsVisual.exe
 
 ./bin/testsVisual.o : ./src/testsVisual.cpp
