@@ -36,17 +36,17 @@ public:
         LineSegment kl = translate(LineSegment(Point(14,8), Point(14,2)), -7.5, -5);
         LineSegment lj = translate(LineSegment(Point(14,2), Point(9,5)) , -7.5, -5);
 
-        map.addLineSegment(ab);
-        map.addLineSegment(bc);
-        map.addLineSegment(cd);
-        map.addLineSegment(da);
-        map.addLineSegment(eg);
-        map.addLineSegment(gh);
-        map.addLineSegment(hf);
-        map.addLineSegment(fe);
-        map.addLineSegment(jk);
-        map.addLineSegment(kl);
-        map.addLineSegment(lj);
+        // map.addLineSegment(ab);
+        // map.addLineSegment(bc);
+        // map.addLineSegment(cd);
+        // map.addLineSegment(da);
+        // map.addLineSegment(eg);
+        // map.addLineSegment(gh);
+        // map.addLineSegment(hf);
+        // map.addLineSegment(fe);
+        // map.addLineSegment(jk);
+        // map.addLineSegment(kl);
+        // map.addLineSegment(lj);
 
         map.addLineSegment(scale(ab,20));
         map.addLineSegment(scale(bc,20));
@@ -60,30 +60,30 @@ public:
         map.addLineSegment(scale(kl,20));
         map.addLineSegment(scale(lj,20));
 
-        map.addLineSegment(scale(ab,250));
-        map.addLineSegment(scale(bc,250));
-        map.addLineSegment(scale(cd,250));
-        map.addLineSegment(scale(da,250));
-        map.addLineSegment(scale(eg,250));
-        map.addLineSegment(scale(gh,250));
-        map.addLineSegment(scale(hf,250));
-        map.addLineSegment(scale(fe,250));
-        map.addLineSegment(scale(jk,250));
-        map.addLineSegment(scale(kl,250));
-        map.addLineSegment(scale(lj,250));
+        // map.addLineSegment(scale(ab,250));
+        // map.addLineSegment(scale(bc,250));
+        // map.addLineSegment(scale(cd,250));
+        // map.addLineSegment(scale(da,250));
+        // map.addLineSegment(scale(eg,250));
+        // map.addLineSegment(scale(gh,250));
+        // map.addLineSegment(scale(hf,250));
+        // map.addLineSegment(scale(fe,250));
+        // map.addLineSegment(scale(jk,250));
+        // map.addLineSegment(scale(kl,250));
+        // map.addLineSegment(scale(lj,250));
 
 
-        map.addLineSegment(scale(ab,1400));
-        map.addLineSegment(scale(bc,1400));
-        map.addLineSegment(scale(cd,1400));
-        map.addLineSegment(scale(da,1400));
-        map.addLineSegment(scale(eg,1400));
-        map.addLineSegment(scale(gh,1400));
-        map.addLineSegment(scale(hf,1400));
-        map.addLineSegment(scale(fe,1400));
-        map.addLineSegment(scale(jk,1400));
-        map.addLineSegment(scale(kl,1400));
-        map.addLineSegment(scale(lj,1400));
+        // map.addLineSegment(scale(ab,1400));
+        // map.addLineSegment(scale(bc,1400));
+        // map.addLineSegment(scale(cd,1400));
+        // map.addLineSegment(scale(da,1400));
+        // map.addLineSegment(scale(eg,1400));
+        // map.addLineSegment(scale(gh,1400));
+        // map.addLineSegment(scale(hf,1400));
+        // map.addLineSegment(scale(fe,1400));
+        // map.addLineSegment(scale(jk,1400));
+        // map.addLineSegment(scale(kl,1400));
+        // map.addLineSegment(scale(lj,1400));
 
 
         getClosestIntersectionOfRays(base, getMap(), fan);
