@@ -3,7 +3,7 @@
 A project that I made to play around with ray casting (lighting in graphics programming).
 
 ## Demo
-
+https://github.com/user-attachments/assets/29eb081a-66f6-457f-8ecf-7d7d20636c4e
 
 ## Tech
 - C++ (programming language)
