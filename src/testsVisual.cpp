@@ -8,7 +8,6 @@
 class Controller
 {
 private:
-    // std::vector<LineSegment> map;
     std::vector<Point> fan;
     Point base = Point(7,5);
     int rayCount = 25;
@@ -36,13 +35,6 @@ public:
         LineSegment jk = translate(LineSegment(Point(9,5), Point(14,8)) , -7.5, -5);
         LineSegment kl = translate(LineSegment(Point(14,8), Point(14,2)), -7.5, -5);
         LineSegment lj = translate(LineSegment(Point(14,2), Point(9,5)) , -7.5, -5);
-
-
-        // outside outside walls
-        // map.addLineSegment(LineSegment(Point(-10000,10000), Point(10000,10000)));
-        // map.addLineSegment(LineSegment(Point(-10000,10000), Point(-10000,-10000)));
-        // map.addLineSegment(LineSegment(Point(-10000,-10000), Point(10000,-10000)));
-        // map.addLineSegment(LineSegment(Point(10000,10000), Point(10000,-10000)));
 
         map.addLineSegment(ab);
         map.addLineSegment(bc);
